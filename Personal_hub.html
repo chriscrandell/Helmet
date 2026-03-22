@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Circle Dashboard</title>
+<style>
+body {
+  margin: 0;
+  background: #0a0a0a;
+  color: #00e5ff;
+  font-family: Arial, sans-serif;
+}
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 420px;
+  height: 420px;
+  transform: translate(-50%, -50%);
+}
+
+.outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: spin 120s linear infinite;
+  opacity: 0.8;
+
+  transform: translate(-50%, -50%);
+}
+
+.line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 120px;
+  height: .8px;
+  background: #00e5ff;
+
+  transform-origin: left center;
+  transform: rotate(calc(var(--i) * 45deg)) translateY(-120px);
+
+  animation: spin 120s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: #00e5ff;
+}
+
+.node {
+  position: absolute;
+  cursor: pointer;
+  color: #00e5ff;
+  transition: 0.2s;
+}
+
+.node:hover {
+  text-shadow: 0 0 8px #00e5ff;
+  transform: scale(1.08);
+}
+
+.links { top: -40px; left: 50%; transform: translateX(-50%); }
+.code { top: 50%; right: -80px; transform: translateY(-50%); }
+.images { bottom: -40px; left: 50%; transform: translateX(-50%); }
+.files { top: 50%; left: -80px; transform: translateY(-50%); }
+
+.panel {
+  position: absolute;
+  width: 220px;
+  background: rgba(0,0,0,0.95);
+  border: 1px solid #00e5ff;
+  box-shadow: 0 0 12px #00e5ff;
+  padding: 12px;
+  display: none;
+  border-radius: 6px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="circle">
+
+  <!-- OUTER STATIC RING -->
+  <svg class="outer" viewBox="0 0 400 400">
+    <circle cx="200" cy="200" r="200" stroke="#00e5ff" stroke-width="1.5" fill="none" />
+  </svg>
+
+  <!-- INNER SUBTLE ROTATION -->
+  <svg class="inner" viewBox="0 0 400 400">
+    <rect x="60" y="60" width="280" height="280" stroke="#00e5ff" fill="none" stroke-width="0.8" />
+
+    <circle cx="200" cy="200" r="140" stroke="#00e5ff" stroke-width="0.8" fill="none" />
+
+    <rect x="100" y="100" width="200" height="200" stroke="#00e5ff" fill="none" stroke-width="0.8" />
+    <rect x="100" y="100" width="200" height="200" stroke="#00e5ff" fill="none" stroke-width="0.8" transform="rotate(45 200 200)" />
+
+    <!-- Lines from corners -->
+    <!-- Outer square corners -->
+    <line x1="100" y1="100" x2="60" y2="60" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="300" y1="100" x2="340" y2="60" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="100" y1="300" x2="60" y2="340" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="300" y1="300" x2="340" y2="340" stroke="#00e5ff" stroke-width="0.8" />
+
+    <!-- Rotated square corners -->
+    <line x1="200" y1="0" x2="200" y2="60" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="400" y1="200" x2="340" y2="200" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="200" y1="400" x2="200" y2="340" stroke="#00e5ff" stroke-width="0.8" />
+    <line x1="0" y1="200" x2="60" y2="200" stroke="#00e5ff" stroke-width="0.8" />
+  </svg>
+
+  <div class="center">Chris</div>
+
+  <div class="node links" onclick="openPanel(event, 'Links')">Links</div>
+  <div class="node code" onclick="openPanel(event, 'Code')">Code</div>
+  <div class="node images" onclick="openPanel(event, 'Images')">Images</div>
+  <div class="node files" onclick="openPanel(event, 'Files')">Files</div>
+
+</div>
+
+<div id="panel" class="panel"></div>
+
+<script>
+function openPanel(e, name) {
+  const panel = document.getElementById('panel');
+
+  panel.style.display = 'block';
+  panel.innerHTML = `<h3>${name}</h3><p>Example content for ${name}</p>`;
+
+  const offset = 20;
+  let x = e.clientX + offset;
+  let y = e.clientY + offset;
+
+  const panelWidth = 220;
+  const panelHeight = 140;
+
+  if (x + panelWidth > window.innerWidth) {
+    x = e.clientX - panelWidth - offset;
+  }
+
+  if (y + panelHeight > window.innerHeight) {
+    y = e.clientY - panelHeight - offset;
+  }
+
+  panel.style.left = x + 'px';
+  panel.style.top = y + 'px';
+}
+
+window.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('node')) {
+    document.getElementById('panel').style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>
