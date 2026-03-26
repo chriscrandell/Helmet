@@ -94,6 +94,17 @@ body {
   border-radius: 6px;
 }
 
+#clocks div {
+  margin: 4px 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+#clocks span {
+  float: right;
+  color: #00e5ff;
+}
+
 </style>
 </head>
 <body>
@@ -137,6 +148,12 @@ body {
 
 </div>
 
+<div id="clocks">
+  <div data-zone="Europe/Berlin">Berlin: <span></span></div>
+  <div data-zone="America/New_York">New York: <span></span></div>
+  <div data-zone="Asia/Tokyo">Tokyo: <span></span></div>
+</div>
+
 <div id="panel" class="panel"></div>
 
 <script>
@@ -170,6 +187,27 @@ window.addEventListener('click', function(e) {
     document.getElementById('panel').style.display = 'none';
   }
 });
+
+function updateClocks() {
+  const clocks = document.querySelectorAll("#clocks div");
+
+  clocks.forEach(clock => {
+    const zone = clock.getAttribute("data-zone");
+
+    const time = new Intl.DateTimeFormat("en-US", {
+      timeZone: zone,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(new Date());
+
+    clock.querySelector("span").textContent = time;
+  });
+}
+
+// update every second
+setInterval(updateClocks, 1000);
+updateClocks();
 </script>
 
 </body>
