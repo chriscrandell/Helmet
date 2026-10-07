@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart book overview — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Smart book overview">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Smart book overview</h1>
+<p class="lead">The expeditionary communications smart book: one place for the 100/200/300-level training material and the pocket-reference content. It's organized so a new Airman can start at 100 and an experienced tech can jump straight to the 300-level equipment pages.</p>
+
+<h2>How the levels work</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Level</th><th>Purpose</th><th>Format</th></tr></thead>
+<tbody>
+<tr><td><span class="badge info">100</span></td><td>Theory: why it works. Vocabulary, physics, protocols.</td><td>Concept pages, diagrams, self-check questions</td></tr>
+<tr><td><span class="badge">200</span></td><td>Operating fundamentals: how to set it up and run it correctly.</td><td>Procedures, checklists, command references</td></tr>
+<tr><td><span class="badge warn">300</span></td><td>Refresh the theory, then apply engineering, implementation and troubleshooting to <em>specific</em> hardware.</td><td>Equipment pages modeled on the PRC-163 RF course, extendable to other radios and legacy kit</td></tr>
+</tbody></table></div>
+
+<h2>Topic map</h2>
+<p class="small muted">Each topic in the pipeline, the level(s) it covers, and where it lives in this wiki. Greyed rows are planned pages. Their place is reserved in the <a href="index.html">wiki index</a>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Topic</th><th>Levels</th><th>Page</th></tr></thead>
+<tbody>
+<tr><td>RF transmission, antennas, propagation</td><td>100–200</td><td><a href="rf-fundamentals.html">RF fundamentals</a></td></tr>
+<tr><td>HF</td><td>100–300</td><td><a href="hf-comms.html">HF communications</a></td></tr>
+<tr><td>SATCOM</td><td>100–300</td><td><a href="satcom-fundamentals.html">Fundamentals</a> · <a href="link-budget.html">Link budget</a> · <a href="terminal-ops.html">Terminal ops</a></td></tr>
+<tr><td>IPv4, subnetting</td><td>100–200</td><td><a href="subnetting.html">Subnetting</a></td></tr>
+<tr><td>Routing (OSPF, EIGRP)</td><td>200–300</td><td><a href="routing-protocols.html">Routing protocols</a></td></tr>
+<tr><td>Switching, switch-port checks</td><td>200</td><td><a href="switching.html">Switching</a></td></tr>
+<tr><td>Troubleshooting, packet inspection</td><td>200–300</td><td><a href="troubleshooting.html">Methodology</a> · <span class="muted">Packet inspection (planned)</span></td></tr>
+<tr><td>Electrical power planning</td><td>200</td><td><a href="power-planning.html">Power planning</a></td></tr>
+<tr class="muted"><td>Radios (PRC-163 first, then others)</td><td>300</td><td>Planned</td></tr>
+<tr class="muted"><td>Antenna selection vs near-peer threats</td><td>200–300</td><td>Planned (from the antenna white paper)</td></tr>
+<tr class="muted"><td>Cables &amp; connectors</td><td>100–200</td><td>Planned</td></tr>
+<tr class="muted"><td>Client support, AD, file &amp; print</td><td>100–200</td><td>Planned</td></tr>
+<tr class="muted"><td>Servers, virtual machines (VMware)</td><td>200</td><td>Planned</td></tr>
+<tr class="muted"><td>Linux / RHEL</td><td>200</td><td>Planned</td></tr>
+<tr class="muted"><td>KGs / encryption</td><td>100–200</td><td>Planned, unclassified concepts only</td></tr>
+<tr class="muted"><td>Spectrum analysis</td><td>200–300</td><td>Planned</td></tr>
+</tbody></table></div>
+
+<h2>Writing rules for this book</h2>
+<ul>
+<li><strong>Unclassified and releasable only.</strong> Nothing from classified or CUI sources, no crypto keying procedures, no unit-specific frequencies or locations. Equipment specifics come from approved, releasable TMs. When in doubt, leave it out and point to the controlled reference.</li>
+<li>One topic per page. Put the 100-level "why" first, then 200 "how", then 300 "this specific box".</li>
+<li>Every procedure ends with "how do I know it worked?"</li>
+<li>Pocket-reference candidates (tables, command lists, checklists) are written so they can be lifted straight into the 160 × 88 mm Word reference.</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

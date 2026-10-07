@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terminal setup &amp; look angles — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Terminal setup &amp; look angles">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Terminal setup &amp; look angles</h1>
+<p class="lead">A generic flow from site survey to a commissioned link, plus a GEO look-angle calculator. Your terminal's TM/operator manual and the satellite operator's access procedures always take precedence over this page.</p>
+
+<h2>Look-angle calculator (GEO)</h2>
+<div class="calc">
+  <div class="form-grid">
+    <label>Site latitude (° , N +)<input id="la-lat" type="number" step="any" value="49.4"></label>
+    <label>Site longitude (° , E +)<input id="la-lon" type="number" step="any" value="7.6"></label>
+    <label>Satellite longitude (° , E +)<input id="la-sat" type="number" step="any" value="12.5"></label>
+    <label>Magnetic declination (° , E +)<input id="la-dec" type="number" step="any" value="3" title="From a current declination model/map for your site"></label>
+  </div>
+  <div class="out" id="la-out"></div>
+</div>
+<p class="small muted">Spherical-earth approximation. Close enough to start a peak-up, not a substitute for the terminal's own pointing tool. Use west longitudes as negative numbers. Magnetic azimuth = true azimuth − east declination. Get declination for your site from a current model (it changes over time). Keep the compass away from vehicles and the dish.</p>
+
+<h2>Setup flow</h2>
+<ol>
+<li><strong>Plan:</strong> satellite, beam, frequencies, polarization, power limits and access window from the satellite access authorization / transmission plan.</li>
+<li><strong>Site survey:</strong> clear line of sight at the computed azimuth and elevation (check obstructions at that bearing, including growth and vehicles that will park there), level ground, power, cable runs, grounding, and RF safety keep-out area in front of the dish.</li>
+<li><strong>Assemble &amp; level:</strong> follow the TM. Check feed and BUC/LNB connections and weatherproofing.</li>
+<li><strong>Point:</strong> set elevation, polarization/skew (linear pol), then sweep azimuth slowly.</li>
+<li><strong>Peak:</strong> on the receive signal (beacon or a known carrier), using the spectrum analyzer or the modem's Es/No or signal readout. Peak azimuth, then elevation, then repeat with smaller moves.</li>
+<li><strong>Transmit only when authorized:</strong> make contact with the network/satellite control center, start at the power they direct, and do the cross-pol / carrier check with them.</li>
+<li><strong>Commission:</strong> confirm Eb/N₀ and margin against the plan. Record final az/el/pol, power settings and modem config.</li>
+<li><strong>Document:</strong> log what you set and why. The next crew starts from your numbers.</li>
+</ol>
+
+<h2>Troubleshooting quick list</h2>
+<ul>
+<li><strong>No receive signal:</strong> wrong satellite or polarization, an obstruction, an LNB power/frequency setting (LO), or a cable or connector fault.</li>
+<li><strong>Receive OK, no transmit:</strong> BUC power or 10 MHz reference, transmit inhibit/mute, wrong uplink frequency, or no authorization from the control center.</li>
+<li><strong>Link drops in weather:</strong> margin too thin (see the <a href="link-budget.html">link budget</a>), water in connectors, or wind moving the dish.</li>
+<li><strong>Intermittent everything:</strong> grounding, loose connectors, a damaged cable, or interference from your own site.</li>
+</ul>
+
+<script>
+(function () {
+  var R = 6378.137, r = 42164.17, rad = Math.PI / 180;
+  function v(id) { return Number(document.getElementById("la-" + id).value); }
+  function norm(a) { return (a % 360 + 360) % 360; }
+  function run() {
+    var lat = v("lat") * rad, dl = (v("sat") - v("lon")) * rad;
+    var cosg = Math.cos(lat) * Math.cos(dl);
+    var g = Math.acos(Math.max(-1, Math.min(1, cosg)));
+    var el = Math.atan2(cosg - R / r, Math.sin(g)) / rad;
+    var az = norm(Math.atan2(Math.sin(dl), -Math.sin(lat) * Math.cos(dl)) / rad);
+    var range = Math.sqrt(r * r + R * R - 2 * r * R * cosg);
+    var mag = norm(az - v("dec"));
+    var rows = [["True azimuth", az.toFixed(1) + "°"], ["Magnetic azimuth", mag.toFixed(1) + "°"],
+      ["Elevation", el.toFixed(1) + "°" + (el < 5 ? (el < 0 ? " — below horizon" : " — very low") : "")],
+      ["Slant range", Math.round(range).toLocaleString() + " km"]];
+    document.getElementById("la-out").innerHTML = rows.map(function (x) { return "<div>" + x[0] + "<strong>" + x[1] + "</strong></div>"; }).join("");
+  }
+  ["lat", "lon", "sat", "dec"].forEach(function (id) { document.getElementById("la-" + id).addEventListener("input", run); });
+  run();
+})();
+</script>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

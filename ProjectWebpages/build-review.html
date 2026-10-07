@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build Review</title>
+    <link rel="stylesheet" href="project-robin.css" />
+    <style>
+      .review-item { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+      .review-item h4 { margin: 0 0 6px; }
+      .review-item p { margin: 0; color: var(--muted); line-height: 1.5; }
+      .review-meta { font-size: 0.85rem; margin-top: 8px; color: var(--text); }
+      .review-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+      .review-actions button { border-radius: 999px; padding: 8px 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: var(--text); cursor: pointer; font-weight: 600; }
+      .review-actions button.accept { background: rgba(65, 214, 178, 0.18); border-color: rgba(65, 214, 178, 0.4); color: #8ff0d0; }
+      .review-item.is-accepted { border-color: rgba(65, 214, 178, 0.45); }
+      .review-item.is-dismissed { opacity: 0.5; }
+      .tag { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; background: rgba(255,255,255,0.08); margin-right: 6px; }
+      .decision textarea { width: 100%; min-height: 54px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); padding: 10px; font: inherit; }
+      .filter-row button { border-radius: 999px; padding: 6px 12px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; }
+      .filter-row button.active { background: rgba(65, 214, 178, 0.18); border-color: rgba(65, 214, 178, 0.4); }
+      @media (max-width: 640px) { .review-item { grid-template-columns: 1fr; } .review-actions { justify-content: flex-start; } }
+    </style>
+  </head>
+  <body>
+<script src="../assets/site-nav.js" data-theme="fixed"></script>
+    <div class="page">
+      <header class="hero">
+        <h1>Build review — before buying more parts</h1>
+        <p>A gap check of the build as of October 2026. Every decision already made (M104 3.2 from a W210, small turbo, B8 + air cups, Sparco Terra bronze, anthracite/graphite, A/C + ABS + power steering kept, no cruise) is already in the parts database. Below are the supporting parts a turbo M104 swap usually needs that weren't tracked yet, plus the open decisions that should be settled before the parts that depend on them get bought.</p>
+        <div class="nav-links">
+          <a href="projects.html">Project hub</a>
+          <a href="master-parts-database.html">Parts database</a>
+          <a href="dependency-tracking.html">Dependency tracking</a>
+          <a href="purchase-planner.html">Purchase planner</a>
+        </div>
+      </header>
+
+      <div class="note">
+        <strong>Accept</strong> adds an item to the parts database as "Needed" so it shows up in the budget, purchase planner and milestone checks. <strong>Dismiss</strong> hides it from the list. Both can be undone. Costs are rough planning estimates (est.), and anything marked "Verify" is a fitment question to check on your car, not a settled fact.
+      </div>
+
+      <section class="stats" id="reviewStats"></section>
+
+      <section class="panel">
+        <h2>Decisions to settle first</h2>
+        <p>Each one gates specific purchases. Type your answer or current thinking here and it's saved in this browser.</p>
+        <div id="decisions"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Suggested additions</h2>
+        <div class="controls-row filter-row" id="filters"></div>
+        <div id="reviewList"></div>
+      </section>
+    </div>
+
+    <script src="data/parts.js"></script>
+    <script src="data/review-items.js"></script>
+    <script src="app.js"></script>
+    <script>
+      const REVIEW_KEY = "robinReview";
+      const DECISION_KEY = "robinDecisions";
+      const items = window.ROBIN_REVIEW_ITEMS || [];
+      const decisions = window.ROBIN_OPEN_DECISIONS || [];
+      let filter = "open";
+
+      function readStore(key) { try { return JSON.parse(localStorage.getItem(key) || "{}"); } catch (e) { return {}; } }
+      function writeStore(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { console.warn(e); } }
+
+      function stateOf(item, review, parts) {
+        if (RobinApp.findPart(parts, item.id)) return "accepted";
+        return review[item.id] === "dismissed" ? "dismissed" : "open";
+      }
+
+      function accept(item) {
+        const parts = RobinApp.loadParts();
+        if (!RobinApp.findPart(parts, item.id)) {
+          parts.push({
+            id: item.id, name: item.name, subsystem: item.subsystem, status: "needed",
+            estCost: item.estCost, actualCost: null, isEstimate: true, pn: "TBD", brand: "TBD",
+            installed: false, mileage: null, torque: "TBD — verify factory manual",
+            lastChanged: "Not installed", replacement: "Not set", rating: null,
+            recommendation: item.recommendation || "Acceptable",
+            notes: "Added from Build review (Oct 2026). " + item.why
+          });
+          RobinApp.saveParts(parts);
+        }
+        const review = readStore(REVIEW_KEY); review[item.id] = "accepted"; writeStore(REVIEW_KEY, review);
+        render();
+      }
+
+      function undo(item) {
+        const parts = RobinApp.loadParts();
+        const p = RobinApp.findPart(parts, item.id);
+        if (p && p.status !== "needed") { alertBox(item.id); return; }
+        RobinApp.saveParts(parts.filter((x) => x.id !== item.id));
+        const review = readStore(REVIEW_KEY); delete review[item.id]; writeStore(REVIEW_KEY, review);
+        render();
+      }
+
+      function alertBox(id) {
+        const el = document.getElementById("msg-" + id);
+        if (el) el.textContent = "Already moved past 'Needed' in the parts database, so it was left in place.";
+      }
+
+      function dismiss(item) {
+        const review = readStore(REVIEW_KEY); review[item.id] = "dismissed"; writeStore(REVIEW_KEY, review);
+        render();
+      }
+
+      function render() {
+        const review = readStore(REVIEW_KEY);
+        const parts = RobinApp.loadParts();
+        const withState = items.map((i) => ({ ...i, state: stateOf(i, review, parts) }));
+        const count = (s) => withState.filter((i) => i.state === s).length;
+        const acceptedCost = withState.filter((i) => i.state === "accepted").reduce((s, i) => s + (i.estCost || 0), 0);
+        const openCost = withState.filter((i) => i.state === "open").reduce((s, i) => s + (i.estCost || 0), 0);
+
+        document.getElementById("reviewStats").innerHTML = `
+          <div class="stat"><span>Waiting for review</span><strong>${count("open")}</strong></div>
+          <div class="stat"><span>Accepted into build</span><strong>${count("accepted")}</strong></div>
+          <div class="stat"><span>Dismissed</span><strong>${count("dismissed")}</strong></div>
+          <div class="stat"><span>Accepted adds (est.)</span><strong>${RobinApp.formatMoney(acceptedCost)}</strong></div>
+          <div class="stat"><span>Still under review (est.)</span><strong>${RobinApp.formatMoney(openCost)}</strong></div>`;
+
+        const filters = [["open", "To review"], ["accepted", "Accepted"], ["dismissed", "Dismissed"], ["all", "All"]];
+        document.getElementById("filters").innerHTML = filters
+          .map(([k, label]) => `<button class="${filter === k ? "active" : ""}" data-filter="${k}">${label}</button>`).join("");
+
+        const shown = withState.filter((i) => filter === "all" || i.state === filter);
+        const groups = {};
+        shown.forEach((i) => { (groups[i.subsystem] = groups[i.subsystem] || []).push(i); });
+        document.getElementById("reviewList").innerHTML = Object.keys(groups).length
+          ? Object.entries(groups).map(([sub, list]) => `
+              <h3 style="margin: 18px 0 10px;">${sub}</h3>
+              ${list.map((i) => `
+                <div class="list-card review-item is-${i.state}">
+                  <div>
+                    <h4>${i.name}</h4>
+                    <p>${i.why}</p>
+                    <div class="review-meta">
+                      <span class="tag">${i.recommendation}</span>
+                      <span class="tag">${RobinApp.formatMoney(i.estCost)} est.</span>
+                      ${i.state === "accepted" ? `<a href="part-detail.html?part=${encodeURIComponent(i.id)}">Open in parts database →</a>` : ""}
+                      <span id="msg-${i.id}" style="color: var(--warning);"></span>
+                    </div>
+                  </div>
+                  <div class="review-actions">
+                    ${i.state === "open" ? `<button class="accept" data-act="accept" data-id="${i.id}">Accept</button><button data-act="dismiss" data-id="${i.id}">Dismiss</button>` : `<button data-act="undo" data-id="${i.id}">Undo</button>`}
+                  </div>
+                </div>`).join("")}`).join("")
+          : `<div class="list-card"><h4>Nothing here</h4><p>${filter === "open" ? "Every suggestion has been reviewed." : "No items in this view."}</p></div>`;
+
+        const saved = readStore(DECISION_KEY);
+        document.getElementById("decisions").innerHTML = decisions.map((d) => `
+          <div class="list-card decision">
+            <h4 style="margin: 0 0 6px;">${saved[d.id] ? "✅" : "❓"} ${d.title}</h4>
+            <p style="margin: 0; color: var(--muted);">${d.detail}</p>
+            <p style="margin: 6px 0 0; font-size: 0.85rem;">Gates: ${d.blocks}</p>
+            <textarea data-decision="${d.id}" placeholder="Your decision or current thinking…">${(saved[d.id] || "").replace(/</g, "&lt;")}</textarea>
+          </div>`).join("");
+      }
+
+      document.addEventListener("click", (e) => {
+        const f = e.target.getAttribute("data-filter");
+        if (f) { filter = f; render(); return; }
+        const act = e.target.getAttribute("data-act");
+        if (!act) return;
+        const item = items.find((i) => i.id === e.target.getAttribute("data-id"));
+        if (!item) return;
+        if (act === "accept") accept(item);
+        if (act === "dismiss") dismiss(item);
+        if (act === "undo") undo(item);
+      });
+
+      document.addEventListener("change", (e) => {
+        const id = e.target.getAttribute("data-decision");
+        if (!id) return;
+        const saved = readStore(DECISION_KEY);
+        const v = e.target.value.trim();
+        if (v) saved[id] = v; else delete saved[id];
+        writeStore(DECISION_KEY, saved);
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subnetting &amp; IPv4/IPv6 — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Subnetting &amp; IPv4/IPv6">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Subnetting &amp; IPv4/IPv6</h1>
+<p class="lead">The prefix table, the block-size ("magic number") method, special ranges, and a calculator to check your work.</p>
+
+<h2>Calculator</h2>
+<div class="calc">
+  <label>Address with prefix or mask, e.g. <code>10.14.37.200/21</code> or <code>192.168.10.77 255.255.255.224</code>
+    <input id="sn-in" value="10.14.37.200/21" autocomplete="off"></label>
+  <div class="out" id="sn-out"></div>
+</div>
+
+<h2>Prefix table</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Prefix</th><th>Mask</th><th>Block size</th><th>Addresses</th><th>Usable hosts</th></tr></thead>
+<tbody>
+<tr><td>/16</td><td>255.255.0.0</td><td>1 (3rd octet)</td><td>65,536</td><td>65,534</td></tr>
+<tr><td>/17</td><td>255.255.128.0</td><td>128 (3rd)</td><td>32,768</td><td>32,766</td></tr>
+<tr><td>/18</td><td>255.255.192.0</td><td>64 (3rd)</td><td>16,384</td><td>16,382</td></tr>
+<tr><td>/19</td><td>255.255.224.0</td><td>32 (3rd)</td><td>8,192</td><td>8,190</td></tr>
+<tr><td>/20</td><td>255.255.240.0</td><td>16 (3rd)</td><td>4,096</td><td>4,094</td></tr>
+<tr><td>/21</td><td>255.255.248.0</td><td>8 (3rd)</td><td>2,048</td><td>2,046</td></tr>
+<tr><td>/22</td><td>255.255.252.0</td><td>4 (3rd)</td><td>1,024</td><td>1,022</td></tr>
+<tr><td>/23</td><td>255.255.254.0</td><td>2 (3rd)</td><td>512</td><td>510</td></tr>
+<tr><td>/24</td><td>255.255.255.0</td><td>1 (3rd)</td><td>256</td><td>254</td></tr>
+<tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>128</td><td>126</td></tr>
+<tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>64</td><td>62</td></tr>
+<tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>32</td><td>30</td></tr>
+<tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>16</td><td>14</td></tr>
+<tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>8</td><td>6</td></tr>
+<tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>4</td><td>2</td></tr>
+<tr><td>/31</td><td>255.255.255.254</td><td>2</td><td>2</td><td>2 (point-to-point links, RFC 3021)</td></tr>
+<tr><td>/32</td><td>255.255.255.255</td><td>—</td><td>1</td><td>1 (host route / loopback)</td></tr>
+</tbody></table></div>
+
+<h2>The block-size method</h2>
+<ol>
+<li>Find the <strong>interesting octet</strong>: the one where the mask isn't 255 or 0.</li>
+<li><strong>Block size</strong> = 256 − mask value in that octet (e.g. /21 → 3rd octet 248 → block 8).</li>
+<li>Network = the largest multiple of the block size ≤ the address's value in that octet (37 → 32).</li>
+<li>Broadcast = next network − 1 (next is 40, so broadcast ends at 39 in that octet, with .255 after it).</li>
+<li>Usable = network + 1 through broadcast − 1.</li>
+</ol>
+<p>Worked example: <code>10.14.37.200/21</code> → block 8 in the 3rd octet → network <code>10.14.32.0</code>, broadcast <code>10.14.39.255</code>, hosts <code>10.14.32.1 – 10.14.39.254</code> (2,046 hosts).</p>
+<p><strong>Wildcard mask</strong> (ACLs, OSPF network statements) = 255.255.255.255 − subnet mask, e.g. /21 → <code>0.0.7.255</code>.</p>
+
+<h2>Special IPv4 ranges</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Range</th><th>Use</th></tr></thead>
+<tbody>
+<tr><td>10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16</td><td>Private (RFC 1918)</td></tr>
+<tr><td>100.64.0.0/10</td><td>Carrier-grade NAT shared space</td></tr>
+<tr><td>127.0.0.0/8</td><td>Loopback</td></tr>
+<tr><td>169.254.0.0/16</td><td>Link-local / APIPA. Seeing this on a client usually means DHCP failed</td></tr>
+<tr><td>224.0.0.0/4</td><td>Multicast (224.0.0.5/.6 OSPF, 224.0.0.10 EIGRP)</td></tr>
+<tr><td>0.0.0.0/0</td><td>Default route</td></tr>
+</tbody></table></div>
+
+<h2>IPv6 essentials</h2>
+<ul>
+<li>128 bits, 8 hextets. Drop leading zeros in a hextet, and replace <em>one</em> run of all-zero hextets with <code>::</code>.</li>
+<li>LANs are <strong>/64</strong>. A site typically gets a /48 or /56.</li>
+<li><code>2000::/3</code> global unicast · <code>fe80::/10</code> link-local (every interface has one) · <code>fc00::/7</code> unique local (fd00::/8 in practice) · <code>ff00::/8</code> multicast · <code>::1</code> loopback.</li>
+<li>No broadcast. ARP is replaced by Neighbor Discovery (ICMPv6).</li>
+<li>Addressing options: static, SLAAC (prefix from router advertisements + interface ID), stateless DHCPv6 (extra options), stateful DHCPv6.</li>
+<li>EUI-64: split the MAC in half, insert <code>FFFE</code>, flip the 7th bit of the first byte.</li>
+</ul>
+
+<script>
+(function () {
+  function toInt(ip) {
+    var p = ip.split(".").map(Number);
+    if (p.length !== 4 || p.some(function (x) { return !(x >= 0 && x <= 255) || isNaN(x); })) return null;
+    return ((p[0] << 24) >>> 0) + (p[1] << 16) + (p[2] << 8) + p[3];
+  }
+  function toIp(n) { return [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join("."); }
+  function maskToPrefix(m) {
+    var n = toInt(m); if (n == null) return null;
+    var bits = n.toString(2).padStart(32, "0");
+    return /^1*0*$/.test(bits) ? bits.indexOf("0") === -1 ? 32 : bits.indexOf("0") : null;
+  }
+  function run() {
+    var v = document.getElementById("sn-in").value.trim();
+    var out = document.getElementById("sn-out");
+    var m = v.split(/[\/\s]+/);
+    var ip = toInt(m[0] || "");
+    var prefix = m[1] == null ? null : (m[1].indexOf(".") !== -1 ? maskToPrefix(m[1]) : Number(m[1]));
+    if (ip == null || prefix == null || !(prefix >= 0 && prefix <= 32)) { out.innerHTML = "<div>Enter an address like <strong>10.1.2.3/24</strong></div>"; return; }
+    var mask = prefix === 0 ? 0 : (0xFFFFFFFF << (32 - prefix)) >>> 0;
+    var net = (ip & mask) >>> 0;
+    var bc = (net | (~mask >>> 0)) >>> 0;
+    var total = Math.pow(2, 32 - prefix);
+    var first = prefix >= 31 ? net : net + 1, last = prefix >= 31 ? bc : bc - 1;
+    var hosts = prefix === 32 ? 1 : prefix === 31 ? 2 : total - 2;
+    var cells = [
+      ["Network", toIp(net) + "/" + prefix], ["Broadcast", prefix >= 31 ? "n/a" : toIp(bc)],
+      ["First usable", toIp(first)], ["Last usable", toIp(last)],
+      ["Usable hosts", hosts.toLocaleString()], ["Mask", toIp(mask)], ["Wildcard", toIp(~mask >>> 0)],
+      ["Next subnet", prefix === 0 ? "—" : toIp((bc + 1) >>> 0)]
+    ];
+    out.innerHTML = cells.map(function (c) { return "<div>" + c[0] + "<strong>" + c[1] + "</strong></div>"; }).join("");
+  }
+  document.getElementById("sn-in").addEventListener("input", run);
+  run();
+})();
+</script>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Hunter</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Project · Game</div>
+      <h1>Code Hunter</h1>
+      <p>Home for the Code Hunter game project: the design doc, milestones and dev log. The design-doc sections below are prompts to fill in. Edit them directly in this file (<code>CodeHunter/index.html</code>) so the content lives with the site rather than in one browser.</p>
+    </header>
+
+    <section class="grid two">
+      <a class="link-card" href="devlog.html"><h3>Dev log →</h3><p>Dated notes on what was built, what broke and what's next.</p></a>
+      <div class="link-card" style="cursor:default"><h3>Milestone progress</h3><p id="progress">—</p></div>
+    </section>
+
+    <section class="panel">
+      <h2>Design doc</h2>
+      <div class="table-wrap"><table>
+        <tbody>
+          <tr><th>Pitch</th><td class="tbd">One or two sentences: what the player does and why it's fun.</td></tr>
+          <tr><th>Core loop</th><td class="tbd">What the player does minute-to-minute (e.g. explore → find → solve → reward).</td></tr>
+          <tr><th>Player &amp; goal</th><td class="tbd">Who you play as and what winning looks like.</td></tr>
+          <tr><th>The "code" mechanic</th><td class="tbd">How code / hunting shows up in play: puzzles, collectibles, programming the character, something else?</td></tr>
+          <tr><th>Audience</th><td class="tbd">Who it's for, including the skill level it assumes.</td></tr>
+          <tr><th>Platform &amp; engine</th><td class="tbd">Browser, desktop or handheld, and the engine or language.</td></tr>
+          <tr><th>Art &amp; audio style</th><td class="tbd">Reference games or a mood board link.</td></tr>
+          <tr><th>Scope for v1</th><td class="tbd">The smallest version worth playing: levels, mechanics, length.</td></tr>
+          <tr><th>Out of scope (for now)</th><td class="tbd">Ideas parked on purpose.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="panel">
+      <h2>Milestones</h2>
+      <ul class="checklist" data-key="codeHunterMilestones" id="milestones">
+        <li data-id="concept"><strong>Concept locked</strong>: pitch, core loop and v1 scope written above</li>
+        <li data-id="paper"><strong>Paper / greybox prototype</strong>: the core loop is playable in its ugliest form</li>
+        <li data-id="fun"><strong>Fun check</strong>: someone else plays it and you watch without helping</li>
+        <li data-id="slice"><strong>Vertical slice</strong>: one level at close to final quality</li>
+        <li data-id="content"><strong>Content complete</strong>: all v1 levels and mechanics in</li>
+        <li data-id="polish"><strong>Polish &amp; bug pass</strong>: menus, save/load, audio, settings</li>
+        <li data-id="release"><strong>Release</strong>: published wherever it's going</li>
+      </ul>
+    </section>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>
+  HelmetKit.checklists();
+  function prog() {
+    var p = HelmetKit.checklistProgress("codeHunterMilestones", document.querySelectorAll("#milestones li").length);
+    document.getElementById("progress").textContent = p.done + " of " + p.total + " milestones complete";
+  }
+  document.getElementById("milestones").addEventListener("checklist-change", prog);
+  prog();
+</script>
+</body>
+</html>

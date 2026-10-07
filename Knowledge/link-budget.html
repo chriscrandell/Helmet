@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Link budget — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Link budget">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Link budget</h1>
+<p class="lead">Will the link close, and with how much margin? Add up the gains and losses in dB from one modem to the other. The calculator below does a single downlink or uplink leg.</p>
+
+<h2>The equations</h2>
+<pre><code>FSPL (dB)     = 20·log10(d_km) + 20·log10(f_GHz) + 92.45
+EIRP (dBW)    = P_tx(dBW) + G_tx(dBi) − L_line(dB)
+C/N0 (dB-Hz)  = EIRP − FSPL − L_other + G/T − k        k = −228.6 dBW/K/Hz
+Eb/N0 (dB)    = C/N0 − 10·log10(R_bps)
+Margin (dB)   = Eb/N0 − Eb/N0_required (from the modem's MODCOD table)
+
+Dish gain (dBi) ≈ 10·log10( η · (π·D·f / c)² )   η ≈ 0.55–0.65
+3 dB beamwidth (°) ≈ 70 · λ / D</code></pre>
+<p class="small muted">dB arithmetic: everything adds and subtracts. dBW = 10·log10(watts). dBm = dBW + 30.</p>
+
+<h2>Calculator</h2>
+<div class="calc">
+  <div class="form-grid">
+    <label>Transmit power (W)<input id="lb-p" type="number" step="any" value="10"></label>
+    <label>Tx antenna diameter (m)<input id="lb-dtx" type="number" step="any" value="1.2"></label>
+    <label>Tx line / misc losses (dB)<input id="lb-ltx" type="number" step="any" value="1"></label>
+    <label>Frequency (GHz)<input id="lb-f" type="number" step="any" value="8"></label>
+    <label>Slant range (km)<input id="lb-d" type="number" step="any" value="38000"></label>
+    <label>Atmos / rain / pointing loss (dB)<input id="lb-lo" type="number" step="any" value="2"></label>
+    <label>Receive G/T (dB/K)<input id="lb-gt" type="number" step="any" value="0"></label>
+    <label>Data rate (kbps)<input id="lb-r" type="number" step="any" value="2048"></label>
+    <label>Required Eb/N₀ (dB)<input id="lb-req" type="number" step="any" value="5"></label>
+    <label>Antenna efficiency (0–1)<input id="lb-eta" type="number" step="any" value="0.6"></label>
+  </div>
+  <div class="out" id="lb-out"></div>
+</div>
+<p class="small muted">The defaults are illustrative only, not a real terminal or satellite. The receive G/T for an uplink is the <em>satellite's</em> G/T for your beam, and it comes from the operator. A full end-to-end budget combines uplink, downlink and interference C/N values. Get the GEO slant range from the <a href="terminal-ops.html">look-angle calculator</a>.</p>
+
+<h2>Reading the result</h2>
+<ul>
+<li><strong>Margin &lt; 0 dB:</strong> the link won't close. Options: reduce the data rate, use a more robust MODCOD, use a bigger dish or more power, or choose a better beam.</li>
+<li><strong>0–3 dB:</strong> fragile. Weather or a slight mis-point drops it.</li>
+<li><strong>Typical targets:</strong> a few dB of clear-sky margin at X/C. More at Ku/Ka for rain, or rely on adaptive coding and modulation.</li>
+<li>Halving the data rate buys about 3 dB. Doubling dish diameter buys about 6 dB of gain (on each end it's used).</li>
+</ul>
+
+<script>
+(function () {
+  var ids = ["p", "dtx", "ltx", "f", "d", "lo", "gt", "r", "req", "eta"];
+  function v(id) { return Number(document.getElementById("lb-" + id).value); }
+  function run() {
+    var c = 299792458, f = v("f") * 1e9, D = v("dtx");
+    var gtx = 10 * Math.log10(v("eta") * Math.pow(Math.PI * D * f / c, 2));
+    var ptx = 10 * Math.log10(v("p"));
+    var eirp = ptx + gtx - v("ltx");
+    var fspl = 20 * Math.log10(v("d")) + 20 * Math.log10(v("f")) + 92.45;
+    var cn0 = eirp - fspl - v("lo") + v("gt") + 228.6;
+    var ebn0 = cn0 - 10 * Math.log10(v("r") * 1000);
+    var margin = ebn0 - v("req");
+    var bw = 70 * (c / f) / D;
+    function f1(x, u) { return isFinite(x) ? x.toFixed(1) + " " + u : "—"; }
+    var rows = [["Tx antenna gain", f1(gtx, "dBi")], ["3 dB beamwidth", isFinite(bw) ? bw.toFixed(2) + "°" : "—"], ["EIRP", f1(eirp, "dBW")],
+      ["Free-space path loss", f1(fspl, "dB")], ["C/N₀", f1(cn0, "dB-Hz")], ["Eb/N₀", f1(ebn0, "dB")],
+      ["Link margin", (isFinite(margin) ? (margin >= 0 ? "✅ " : "❌ ") : "") + f1(margin, "dB")]];
+    document.getElementById("lb-out").innerHTML = rows.map(function (r) { return "<div>" + r[0] + "<strong>" + r[1] + "</strong></div>"; }).join("");
+  }
+  ids.forEach(function (id) { document.getElementById("lb-" + id).addEventListener("input", run); });
+  run();
+})();
+</script>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

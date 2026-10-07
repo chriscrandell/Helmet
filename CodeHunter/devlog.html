@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Hunter Dev Log</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page narrow">
+    <header class="hero">
+      <div class="eyebrow">Code Hunter</div>
+      <h1>Dev log</h1>
+      <p>Saved in this browser. Use Export for a backup.</p>
+      <div id="backup"></div>
+    </header>
+    <div id="log"></div>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>
+  HelmetKit.log("#log", {
+    key: "codeHunterDevLog",
+    titleField: "title",
+    empty: "No entries yet.",
+    fields: [
+      { name: "date", label: "Date", type: "date" },
+      { name: "title", label: "Title" },
+      { name: "area", label: "Area", type: "select", options: ["Design", "Gameplay code", "Art", "Audio", "Levels", "UI", "Tools / build", "Playtest"] },
+      { name: "hours", label: "Hours", type: "number" },
+      { name: "work", label: "What I did", type: "textarea" },
+      { name: "problems", label: "Problems / ideas", type: "textarea" },
+      { name: "next", label: "Next", type: "textarea" }
+    ]
+  });
+  HelmetKit.backup("#backup", ["codeHunterDevLog", "codeHunterMilestones"], "code-hunter");
+</script>
+</body>
+</html>

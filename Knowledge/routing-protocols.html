@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Routing protocols — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Routing protocols">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Routing protocols</h1>
+<p class="lead">How a router picks a route, and the quick-reference facts for OSPF, EIGRP and BGP that come up in exams and on the job.</p>
+
+<h2>How the route is chosen</h2>
+<ol>
+<li><strong>Longest prefix match</strong> wins first. A /27 beats a /24, which beats the default route, no matter which protocol learned them.</li>
+<li>For the <em>same</em> prefix from different sources, the lowest <strong>administrative distance</strong> wins.</li>
+<li>Within one protocol, the lowest <strong>metric</strong> wins (equal metrics → ECMP load sharing).</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>Source</th><th>AD</th><th>Source</th><th>AD</th></tr></thead>
+<tbody>
+<tr><td>Connected</td><td>0</td><td>OSPF</td><td>110</td></tr>
+<tr><td>Static</td><td>1</td><td>IS-IS</td><td>115</td></tr>
+<tr><td>eBGP</td><td>20</td><td>RIP</td><td>120</td></tr>
+<tr><td>EIGRP (internal)</td><td>90</td><td>EIGRP (external)</td><td>170</td></tr>
+<tr><td>iBGP</td><td>200</td><td>Unusable</td><td>255</td></tr>
+</tbody></table></div>
+<p class="small muted">Floating static route: a static with a higher AD than the dynamic route (e.g. <code>ip route 0.0.0.0 0.0.0.0 10.0.0.1 250</code>), so it only installs if the dynamic route disappears.</p>
+
+<h2>OSPF</h2>
+<ul>
+<li>Link-state, Dijkstra SPF. Cost = reference bandwidth ÷ interface bandwidth. The default reference is 100 Mbps, so set <code>auto-cost reference-bandwidth</code> consistently on every router if you have links faster than 100 Mbps.</li>
+<li>Areas: area 0 is the backbone, and every other area must touch it. ABRs sit between areas, ASBRs redistribute external routes.</li>
+<li>Multicast 224.0.0.5 (all OSPF routers) and 224.0.0.6 (DR/BDR). Protocol 89.</li>
+<li>Timers: hello 10 s / dead 40 s on broadcast and point-to-point. 30 / 120 s on NBMA.</li>
+<li>DR/BDR on multi-access segments: highest priority wins (default 1, 0 = never), then highest router ID. No pre-emption.</li>
+<li>Neighbor states: Down → Init → 2-Way → ExStart → Exchange → Loading → Full.</li>
+</ul>
+<p><strong>Adjacency won't form? Check that these match:</strong> area ID, subnet and mask, hello/dead timers, authentication, area type (stub flags), MTU (stuck in ExStart/Exchange), and that router IDs are unique. Also check for passive interfaces.</p>
+<pre><code>show ip ospf neighbor
+show ip ospf interface brief
+show ip ospf database
+show ip route ospf</code></pre>
+
+<h2>EIGRP</h2>
+<ul>
+<li>Advanced distance-vector, DUAL algorithm, Cisco-originated (now an open informational RFC). Multicast 224.0.0.10, protocol 88.</li>
+<li>Metric uses bandwidth (slowest link) and delay (sum) by default (K1 = K3 = 1).</li>
+<li><strong>Successor</strong> = best path. <strong>Feasible successor</strong> = backup path that passes the feasibility condition: its reported distance is less than the successor's feasible distance. That makes it loop-free and an instant failover.</li>
+<li>Neighbors need a matching AS number and K-values, and the same subnet. Authentication must match if it's configured.</li>
+<li>Unequal-cost load balancing with <code>variance</code>.</li>
+</ul>
+<pre><code>show ip eigrp neighbors
+show ip eigrp topology
+show ip route eigrp</code></pre>
+
+<h2>BGP</h2>
+<ul>
+<li>Path-vector, runs over TCP 179. eBGP is between autonomous systems, iBGP within one (iBGP needs a full mesh, route reflectors, or confederations).</li>
+<li>Loop prevention: a router rejects routes that already contain its own AS in the AS_PATH.</li>
+<li>Best-path order (Cisco, simplified): highest <strong>weight</strong> → highest <strong>local preference</strong> → locally originated → shortest <strong>AS_PATH</strong> → lowest origin type → lowest <strong>MED</strong> → eBGP over iBGP → lowest IGP metric to next hop → oldest eBGP route → lowest router ID.</li>
+<li>Influence outbound traffic with weight/local preference. Influence inbound traffic with AS_PATH prepending/MED.</li>
+</ul>
+<pre><code>show ip bgp summary
+show ip bgp
+show ip bgp neighbors 192.0.2.1 advertised-routes</code></pre>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

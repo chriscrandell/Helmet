@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study plan &amp; cert roadmap — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Study plan &amp; cert roadmap">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Study plan &amp; cert roadmap</h1>
+<p class="lead">Degree and certification goals in one place, with a weekly study log so progress is visible. Tick goals as they're completed. Everything is saved in this browser.</p>
+
+<h2>Goals</h2>
+<ul class="checklist" data-key="growthGoals">
+<li data-id="wgu"><strong>Finish WGU bachelor's</strong>: software development / cybersecurity coursework</li>
+<li data-id="omscs-apply"><strong>Apply to Georgia Tech OMSCS</strong> after the bachelor's</li>
+<li data-id="ccna"><strong>CCNA</strong>: decide v1.1 (before Feb 2027) or v2.0. See <a href="ccna.html">CCNA</a></li>
+<li data-id="encor"><strong>CCNP Enterprise: ENCOR</strong></li>
+<li data-id="concentration"><strong>CCNP Enterprise: concentration</strong> (ENARSI suggested)</li>
+<li data-id="smartbook"><strong>Smart book v1</strong>: every topic in the <a href="smartbook-overview.html">topic map</a> has a page</li>
+</ul>
+<p class="small muted">Add or change goals by editing <code>Knowledge/study-plan.html</code>. Each <code>&lt;li data-id="…"&gt;</code> becomes a checkbox.</p>
+
+<h2>Weekly rhythm</h2>
+<ul>
+<li>Pick <strong>one primary</strong> goal per quarter. The others get maintenance time only.</li>
+<li>Short sessions most days beat one long weekend session, especially for subnetting and CLI fluency.</li>
+<li>Lab what you read within 48 hours. Write a wiki page or note for anything you had to look up twice.</li>
+<li>Book the exam date early. A date on the calendar sets the pace.</li>
+</ul>
+
+<h2>Study log</h2>
+<div id="study-backup"></div>
+<div id="study-log"></div>
+
+<script>
+  HelmetKit.log("#study-log", {
+    key: "growthStudyLog",
+    titleField: "topic",
+    empty: "No sessions logged yet.",
+    fields: [
+      { name: "date", label: "Date", type: "date" },
+      { name: "topic", label: "Topic" },
+      { name: "goal", label: "Goal", type: "select", options: ["WGU", "OMSCS prep", "CCNA", "CCNP ENCOR", "CCNP concentration", "Smart book", "Programming", "Other"] },
+      { name: "minutes", label: "Minutes", type: "number" },
+      { name: "notes", label: "What stuck / what to revisit", type: "textarea" }
+    ]
+  });
+  HelmetKit.backup("#study-backup", ["growthStudyLog", "growthGoals", "ccnaChecklist", "ccnpChecklist", "pythonPath", "javaPath", "jsPath"], "study");
+</script>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

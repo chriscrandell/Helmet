@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Troubleshooting methodology — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Troubleshooting methodology">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Troubleshooting methodology</h1>
+<p class="lead">A repeatable process beats guessing, especially at 0300 with a commander asking when it'll be back. Use the same steps every time, and work the layers.</p>
+
+<h2>The process</h2>
+<ol>
+<li><strong>Identify the problem:</strong> what exactly fails, for whom, since when, and what changed? Reproduce it yourself.</li>
+<li><strong>Establish a theory:</strong> start with the most likely and simplest cause (cable, power, config change).</li>
+<li><strong>Test the theory:</strong> confirm or eliminate it. If eliminated, form the next theory.</li>
+<li><strong>Plan the fix:</strong> consider impact, get approval if it touches other users or a change window, and have a back-out plan.</li>
+<li><strong>Implement:</strong> one change at a time.</li>
+<li><strong>Verify:</strong> from the <em>user's</em> perspective, not just "the interface is up". Check you didn't break something else.</li>
+<li><strong>Document:</strong> symptom, cause, fix and time to fix. That's the knowledge base for the next crew.</li>
+</ol>
+
+<h2>Approaches</h2>
+<ul>
+<li><strong>Bottom-up</strong> (Layer 1 up): best when the cause is unknown or the problem is physical. Usually the default in the field.</li>
+<li><strong>Top-down</strong> (application down): when one app fails and others work.</li>
+<li><strong>Divide and conquer:</strong> start at Layer 3 (can you ping?), then go up or down based on the result. Fast for experienced techs.</li>
+<li><strong>Follow the path:</strong> trace hop by hop from source to destination.</li>
+<li><strong>Compare to known-good:</strong> swap with a working cable, port or config and diff the differences.</li>
+</ul>
+
+<h2>Layer-by-layer checks</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Layer</th><th>Check</th><th>Tools / commands</th></tr></thead>
+<tbody>
+<tr><td>1 Physical</td><td>Power, link lights, cable and connector, optics/levels, RF: antenna, VSWR, signal level</td><td>Cable tester, light meter, <code>show interfaces</code> (errors), spectrum analyzer</td></tr>
+<tr><td>2 Data link</td><td>Port state, VLAN, trunk, STP blocking, MAC learned, duplex</td><td><code>show interfaces status</code>, <code>show mac address-table</code>, <code>show spanning-tree</code>, <a href="switching.html">port checks</a></td></tr>
+<tr><td>3 Network</td><td>IP/mask/gateway, routes both directions, ACLs, NAT</td><td><code>ipconfig /all</code> · <code>ip a</code>, <code>ping</code>, <code>tracert</code>/<code>traceroute</code>, <code>show ip route</code></td></tr>
+<tr><td>4 Transport</td><td>Port open? Firewall? MTU/fragmentation over tunnels/SATCOM</td><td><code>Test-NetConnection host -Port 443</code>, <code>nc -zv host 443</code>, <code>ping -f -l 1400</code> (Windows DF test)</td></tr>
+<tr><td>5–7 Upper</td><td>DNS, certificates/time, authentication, service running</td><td><code>nslookup</code>/<code>dig</code>, check clock/NTP, service logs, Event Viewer, <code>journalctl</code></td></tr>
+</tbody></table></div>
+
+<h2>Common culprits</h2>
+<ul>
+<li><strong>"Network is down" but ping works:</strong> DNS, a proxy, or the application itself.</li>
+<li><strong>Works for small packets, fails for large ones:</strong> MTU issue on a tunnel or SATCOM path.</li>
+<li><strong>Authentication fails everywhere at once:</strong> time skew (Kerberos/certs), or the domain controller isn't reachable.</li>
+<li><strong>Intermittent:</strong> duplex mismatch, a flapping link, an STP topology change, interference, or grounding.</li>
+<li><strong>Started after a change:</strong> it's probably the change. Check the change log first.</li>
+</ul>
+
+<h2>Trouble ticket notes template</h2>
+<pre><code>Symptom:        (what the user sees, exact error text)
+Scope:          (one user / one site / everyone; since when)
+Recent changes: 
+Tests & results:
+Root cause:     
+Fix:            
+Verified by:    (user confirmation / test)
+Time to restore:</code></pre>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

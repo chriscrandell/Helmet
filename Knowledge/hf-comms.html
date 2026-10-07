@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HF communications — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="HF communications">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>HF communications</h1>
+<p class="lead">High frequency (3–30 MHz): beyond-line-of-sight comms with no satellite, provided you pick the right frequency for the time of day and the distance.</p>
+
+<h2>How HF travels</h2>
+<ul>
+<li><strong>Ground wave:</strong> follows the earth's surface. Useful out to tens of km over land, much further over seawater, and best at the low end of HF.</li>
+<li><strong>Skywave:</strong> refracted back down by the ionosphere. This is what gives regional to global range.</li>
+<li><strong>Skip zone:</strong> the gap between where ground wave fades and the first skywave lands. Stations there can't hear you. NVIS fills this gap.</li>
+</ul>
+
+<h2>The ionosphere</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Layer</th><th>When</th><th>Effect</th></tr></thead>
+<tbody>
+<tr><td>D</td><td>Daytime only</td><td>Absorbs, mainly the lower frequencies. That's why low HF is weak by day.</td></tr>
+<tr><td>E</td><td>Mostly daytime</td><td>Some refraction. Sporadic-E can open unexpected paths.</td></tr>
+<tr><td>F1 / F2</td><td>F2 day and night (F1 merges into F2 at night)</td><td>The main reflecting layer for long-range HF</td></tr>
+</tbody></table></div>
+<p><strong>"Higher by day, lower by night."</strong> Usable frequencies drop after sunset as ionization decays. Plan a day frequency and a night frequency, and expect the changeover around dawn and dusk.</p>
+
+<h2>Picking a frequency</h2>
+<ul>
+<li><strong>MUF</strong> (maximum usable frequency): above it, the signal passes through the ionosphere and is lost.</li>
+<li><strong>LUF</strong> (lowest usable frequency): below it, D-layer absorption and noise win.</li>
+<li><strong>FOT</strong> (optimum working frequency) ≈ 85% of the MUF. Operate between LUF and FOT.</li>
+<li>Use propagation prediction tools (e.g. VOACAP-based tools) for the path, date, time and sunspot activity, then confirm with ALE or a sounding.</li>
+</ul>
+
+<h2>NVIS (near-vertical incidence skywave)</h2>
+<ul>
+<li>Fires energy nearly straight up so it comes back down in a radius of roughly 0–400 km with no skip zone. Ideal for tactical and regional nets, and it works from valleys.</li>
+<li>Use frequencies roughly 2–10 MHz, below the critical frequency (foF2). In practice that's the lower end at night and higher by day.</li>
+<li>Antenna: a horizontal dipole mounted low (around 0.1–0.25 λ above ground), or a whip tilted back toward horizontal. A vertical whip gives poor NVIS.</li>
+</ul>
+
+<h2>Antennas</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Antenna</th><th>Strength</th><th>Trade-off</th></tr></thead>
+<tbody>
+<tr><td>Vehicle/manpack whip</td><td>Fast, mobile</td><td>Inefficient on low HF, poor NVIS unless tilted</td></tr>
+<tr><td>Horizontal dipole / inverted-V</td><td>Efficient, good NVIS when low</td><td>Needs supports and space, cut or tuned per band</td></tr>
+<tr><td>Long wire / sloping wire</td><td>Simple, longer-range directivity</td><td>Needs a tuner and a good ground</td></tr>
+<tr><td>Broadband (e.g. terminated folded dipole)</td><td>Covers the band without retuning, good with ALE</td><td>Some power lost in the termination</td></tr>
+</tbody></table></div>
+
+<h2>ALE</h2>
+<p>Automatic link establishment (MIL-STD-188-141): radios scan a shared set of frequencies, sound them, and automatically pick the best one to link on. Operators still plan a good frequency list. ALE only chooses among the frequencies you give it.</p>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li>Can't reach anyone: wrong frequency for the time of day or path, tuner not tuned (check VSWR), or a poor ground/counterpoise.</li>
+<li>Hear them, they can't hear you: transmit power, antenna or tuner on transmit, or high noise at their end.</li>
+<li>Works by day, fails at night (or the reverse): plan a frequency change.</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

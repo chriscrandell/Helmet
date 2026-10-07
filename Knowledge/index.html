@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page wiki-main">
+    <header class="hero">
+      <div class="eyebrow">Knowledge · Self-improvement library</div>
+      <h1>Knowledge wiki</h1>
+      <p>Study notes, quick references and the expeditionary comms smart book, organized by category. Pages marked <span class="badge">Solid</span> are reliable references, <span class="badge warn">Draft</span> pages are still growing, and greyed-out pages are planned.</p>
+    </header>
+
+    <section class="grid" id="wiki-stats"></section>
+
+    <section class="panel">
+      <input type="search" id="wiki-search" placeholder="Search every page title and summary…" aria-label="Search the wiki">
+      <div id="wiki-results" style="margin-top:8px"></div>
+    </section>
+
+    <div id="wiki-cats"></div>
+
+    <section class="panel">
+      <h2>Adding to the wiki</h2>
+      <ol>
+        <li>Copy <code>Knowledge/_template.html</code> to a new file name, e.g. <code>ospf-deep-dive.html</code>.</li>
+        <li>Write the content between the marked lines (headings, tables, code blocks and checklists are all styled already).</li>
+        <li>Register it in <code>Knowledge/wiki-data.js</code> under the right category. It then appears here, in every page's sidebar and in search.</li>
+        <li>To add a whole new category (e.g. Linux), add a new block to <code>categories</code> in the same file.</li>
+      </ol>
+      <p class="small muted">Every page also has a <strong>My notes</strong> box at the bottom for quick capture. It's saved in the browser, so move anything worth keeping into the page itself.</p>
+    </section>
+  </main>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>
+  (function () {
+    var W = window.WIKI;
+    var counts = { solid: 0, draft: 0, planned: 0 };
+    W.categories.forEach(function (c) { c.pages.forEach(function (p) { counts[p.status] = (counts[p.status] || 0) + 1; }); });
+    document.getElementById("wiki-stats").innerHTML =
+      '<div class="stat"><span>Categories</span><strong>' + W.categories.length + "</strong></div>" +
+      '<div class="stat"><span>Solid pages</span><strong>' + counts.solid + "</strong></div>" +
+      '<div class="stat"><span>Drafts</span><strong>' + counts.draft + "</strong></div>" +
+      '<div class="stat"><span>Planned</span><strong>' + counts.planned + "</strong></div>";
+
+    var badge = { solid: '<span class="badge">Solid</span>', draft: '<span class="badge warn">Draft</span>', planned: '<span class="badge muted">Planned</span>' };
+    document.getElementById("wiki-cats").innerHTML = W.categories.map(function (c) {
+      return '<section class="cat"><h2 id="' + c.id + '">' + c.title + "</h2><p>" + c.blurb + '</p><div class="grid">' +
+        c.pages.map(function (p) {
+          var inner = "<h3>" + p.title + " " + badge[p.status] + "</h3><p>" + p.summary + "</p>";
+          return p.status === "planned"
+            ? '<div class="link-card planned">' + inner + "</div>"
+            : '<a class="link-card" href="' + p.file + '">' + inner + "</a>";
+        }).join("") + "</div></section>";
+    }).join("");
+
+    window.WikiSearch(document.querySelector(".wiki-main"));
+  })();
+</script>
+</body>
+</html>

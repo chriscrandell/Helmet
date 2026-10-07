@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="JavaScript">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>JavaScript</h1>
+<p class="lead">The language of the browser and of this site. This page covers modern syntax, async code, the DOM, and the step up to TypeScript/Angular.</p>
+
+<h2>Modern syntax</h2>
+<pre><code>const max = 10;            // const by default, let when it changes, never var
+let count = 0;
+
+const add = (a, b) =&gt; a + b;                       // arrow function
+const { host, port = 22 } = device;                // destructuring + default
+const merged = { ...defaults, ...overrides };      // spread
+const label = `${host}:${port}`;                    // template literal
+const name = user?.profile?.name ?? "unknown";     // optional chaining + nullish
+
+// array methods (no loops needed most of the time)
+const ssh   = devices.filter(d =&gt; d.port === 22);
+const hosts = devices.map(d =&gt; d.host);
+const total = parts.reduce((sum, p) =&gt; sum + (p.cost ?? 0), 0);
+const found = devices.find(d =&gt; d.host === "sw1");
+
+// modules
+export function parse(s) { ... }
+import { parse } from "./parse.js";</code></pre>
+<p class="small muted">Equality: always <code>===</code> and <code>!==</code>. Truthiness traps: <code>0</code>, <code>""</code>, <code>NaN</code>, <code>null</code> and <code>undefined</code> are all falsy.</p>
+
+<h2>Async: promises and async/await</h2>
+<pre><code>async function loadDevices() {
+  try {
+    const res = await fetch("/api/devices");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("load failed", err);
+    return [];
+  }
+}
+
+// run in parallel, wait for all
+const [parts, log] = await Promise.all([getParts(), getLog()]);</code></pre>
+
+<h2>The DOM</h2>
+<pre><code>const list = document.querySelector("#parts");
+list.innerHTML = parts.map(p =&gt; `&lt;li&gt;${escapeHtml(p.name)}&lt;/li&gt;`).join("");
+
+document.addEventListener("click", e =&gt; {         // event delegation
+  const btn = e.target.closest("[data-remove]");
+  if (btn) remove(btn.dataset.remove);
+});
+
+localStorage.setItem("key", JSON.stringify(obj)); // how this site saves your edits
+const obj2 = JSON.parse(localStorage.getItem("key") ?? "null");</code></pre>
+<p class="small muted">Escape anything user-typed before putting it into innerHTML, or use <code>textContent</code>. That's how you avoid XSS.</p>
+
+<h2>Node, npm and TypeScript</h2>
+<ul>
+<li>Node runs JS outside the browser. <code>npm init -y</code>, <code>npm install pkg</code>, scripts in <code>package.json</code>.</li>
+<li>TypeScript adds types: <code>function total(parts: Part[]): number</code>. Angular is written in TypeScript, so learning TS pays off there.</li>
+<li>Angular essentials: components, templates and bindings, services + dependency injection, HttpClient, routing, RxJS observables.</li>
+</ul>
+
+<h2>Learning path</h2>
+<ul class="checklist" data-key="jsPath">
+<li data-id="syntax">Modern syntax and array methods</li>
+<li data-id="async">Promises, async/await, fetch with error handling</li>
+<li data-id="dom">DOM manipulation, events, delegation</li>
+<li data-id="modules">ES modules</li>
+<li data-id="node">Node + npm basics, a small CLI tool</li>
+<li data-id="ts">TypeScript: types, interfaces, generics</li>
+<li data-id="angular">Angular app that calls your Spring Boot API</li>
+<li data-id="site">Improve this site: e.g. sync localStorage data to a small API on the Proxmox host</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

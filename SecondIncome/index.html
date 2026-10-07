@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Second Income</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Ventures</div>
+      <h1>Second income</h1>
+      <p>A pipeline for side-income ideas. Capture each idea, score it the same way every time, keep the next step visible, and only move it forward once the checks below are done. Everything is saved in this browser. Export a backup now and then.</p>
+      <div id="backup"></div>
+    </header>
+
+    <section class="grid" id="stats"></section>
+
+    <section class="callout warn">
+      <p><strong>Before anything earns a dollar, as an active-duty member:</strong></p>
+      <ul>
+        <li>Talk to your base legal office's ethics counselor about outside employment and activities under the Joint Ethics Regulation. Prior approval or reporting may be required, and the rules depend on the work.</li>
+        <li>No use of government time, equipment, networks or non-public information, and no use of your rank or position to promote the business.</li>
+        <li>Watch for conflicts of interest with your duties. That matters especially for anything comms, IT or acquisition-adjacent, given your role.</li>
+        <li>Plan for taxes. Self-employment income usually means quarterly estimated payments. A tax professional (or your installation's tax center in season) can confirm what applies to you.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Idea pipeline</h2>
+      <p class="muted small"><strong>Fit score</strong> (1–5): how well it suits your schedule and deployments, uses skills you already have, keeps startup cost low, gets to a first dollar quickly, and can grow. Edit any cell. Changes save as you type.</p>
+      <div class="btn-row">
+        <button class="btn primary" id="addIdea" type="button">+ Add idea</button>
+      </div>
+      <div id="ideas"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Idea prompts from your skill set</h2>
+      <p class="muted small">Starting points only. Click one to add it to the pipeline as an idea to evaluate.</p>
+      <div class="btn-row" id="prompts"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Stage gates</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Status</th><th>Move on when…</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge muted">Idea</span></td><td>It's written down with a one-line description of who pays and why.</td></tr>
+          <tr><td><span class="badge info">Researching</span></td><td>You've checked demand (people already paying for something similar), startup cost and time per week, and talked to the ethics counselor.</td></tr>
+          <tr><td><span class="badge warn">Testing</span></td><td>A small, cheap test has run: a first client, a first listing, a first sale.</td></tr>
+          <tr><td><span class="badge">Active</span></td><td>It's earning, and the bookkeeping and tax setup are in place.</td></tr>
+          <tr><td><span class="badge muted">Parked</span></td><td>It isn't worth it right now. Keep the notes so you don't re-research it later.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>
+  var STATUSES = ["Idea", "Researching", "Testing", "Active", "Parked"];
+  var tbl = HelmetKit.table("#ideas", {
+    key: "incomeIdeas",
+    empty: "No ideas yet. Add one, or start from a prompt below.",
+    columns: [
+      { name: "name", label: "Idea", width: 180 },
+      { name: "status", label: "Status", type: "select", options: STATUSES, width: 130 },
+      { name: "score", label: "Fit (1–5)", type: "number", width: 80 },
+      { name: "startup", label: "Startup $", type: "number", width: 100 },
+      { name: "hours", label: "Hrs / week", type: "number", width: 90 },
+      { name: "monthly", label: "Est. $ / month", type: "number", width: 110 },
+      { name: "next", label: "Next step", type: "textarea", width: 220 },
+      { name: "notes", label: "Notes", type: "textarea", width: 220 }
+    ],
+    onChange: stats
+  });
+
+  function stats(rows) {
+    rows = rows || tbl.rows();
+    var count = function (s) { return rows.filter(function (r) { return r.status === s; }).length; };
+    var active = rows.filter(function (r) { return r.status === "Active"; })
+      .reduce(function (s, r) { return s + (Number(r.monthly) || 0); }, 0);
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><span>Ideas tracked</span><strong>' + rows.length + "</strong></div>" +
+      '<div class="stat"><span>Researching / testing</span><strong>' + (count("Researching") + count("Testing")) + "</strong></div>" +
+      '<div class="stat"><span>Active</span><strong>' + count("Active") + "</strong></div>" +
+      '<div class="stat"><span>Active est. monthly</span><strong>$' + active.toLocaleString() + "</strong></div>";
+  }
+
+  document.getElementById("addIdea").addEventListener("click", function () {
+    tbl.add({ name: "New idea", status: "Idea" });
+  });
+
+  var PROMPTS = [
+    "Freelance Java/Spring or Python/Flask development",
+    "Small-business IT / network setup & support",
+    "Home-lab & self-hosting consulting (Proxmox, Docker)",
+    "Technical training or study content (CCNA, Linux)",
+    "3D-printed parts or custom enclosures",
+    "W201 / classic Mercedes parts, guides or fabrication",
+    "Technical writing (manuals, smart books, docs)"
+  ];
+  document.getElementById("prompts").innerHTML = PROMPTS.map(function (p, i) {
+    return '<button class="btn small" type="button" data-p="' + i + '">+ ' + HelmetKit.esc(p) + "</button>";
+  }).join("");
+  document.getElementById("prompts").addEventListener("click", function (e) {
+    var i = e.target.getAttribute("data-p");
+    if (i != null) tbl.add({ name: PROMPTS[i], status: "Idea" });
+  });
+
+  HelmetKit.backup("#backup", ["incomeIdeas"], "second-income");
+  stats();
+</script>
+</body>
+</html>

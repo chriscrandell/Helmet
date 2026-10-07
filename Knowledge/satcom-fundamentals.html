@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SATCOM fundamentals — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="SATCOM fundamentals">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>SATCOM fundamentals</h1>
+<p class="lead">Orbits, frequency bands, polarization and what degrades a link. This is the 100/200-level theory everything else on this shelf builds on.</p>
+
+<h2>Orbits</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Orbit</th><th>Altitude</th><th>Characteristics</th></tr></thead>
+<tbody>
+<tr><td>LEO</td><td>~160–2,000 km</td><td>Low latency (tens of ms). Satellites move fast across the sky, so you need large constellations and tracking or phased-array terminals.</td></tr>
+<tr><td>MEO</td><td>2,000–35,786 km</td><td>Mid latency. GPS sits here (~20,200 km), as do some broadband constellations.</td></tr>
+<tr><td>GEO</td><td>35,786 km above the equator</td><td>Fixed point in the sky, so you can use fixed pointing. One hop ground→sat→ground ≈ 240+ ms, and a round trip ≈ 500+ ms. Poor coverage above ~70–75° latitude.</td></tr>
+<tr><td>HEO (e.g. Molniya)</td><td>Elliptical</td><td>Long dwell over high latitudes, where GEO is weak.</td></tr>
+</tbody></table></div>
+<p class="small muted">GEO latency matters: TCP throughput over a high-latency path suffers unless you use acceleration or tuned window sizes. Interactive apps feel it too.</p>
+
+<h2>Frequency bands</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Band</th><th>Range (IEEE)</th><th>Typical SATCOM use</th></tr></thead>
+<tbody>
+<tr><td>UHF</td><td>300 MHz – 1 GHz</td><td>Military narrowband tactical SATCOM (manpack, on-the-move). Foliage-tolerant, low data rate, congested.</td></tr>
+<tr><td>L</td><td>1 – 2 GHz</td><td>Mobile satellite services (handhelds, small terminals). Rain-tolerant.</td></tr>
+<tr><td>S</td><td>2 – 4 GHz</td><td>Mobile services, telemetry.</td></tr>
+<tr><td>C</td><td>4 – 8 GHz</td><td>Commercial trunking. Uplink ~5.9–6.4 GHz, downlink ~3.7–4.2 GHz. Very rain-tolerant, but needs big dishes.</td></tr>
+<tr><td>X</td><td>8 – 12 GHz</td><td>Military wideband (e.g. WGS). Uplink ~7.9–8.4 GHz, downlink ~7.25–7.75 GHz. Good rain performance.</td></tr>
+<tr><td>Ku</td><td>12 – 18 GHz</td><td>Commercial VSAT / broadband. Uplink ~14 GHz, downlink ~11–12 GHz. Moderate rain fade.</td></tr>
+<tr><td>K / Ka</td><td>18 – 27 / 27 – 40 GHz</td><td>High-throughput spot beams, small terminals. Military Ka uplink ~30–31 GHz, downlink ~20.2–21.2 GHz. Significant rain fade.</td></tr>
+</tbody></table></div>
+<p><strong>Rule of thumb:</strong> higher frequency → more gain from the same dish and more bandwidth, but more rain fade and tighter pointing.</p>
+
+<h2>Polarization</h2>
+<ul>
+<li><strong>Linear</strong> (horizontal/vertical): common on C and Ku. Needs a polarization (skew) adjustment that depends on your location relative to the satellite.</li>
+<li><strong>Circular</strong> (RHCP/LHCP): common on X, Ka, L and UHF. No skew adjustment.</li>
+<li><strong>Cross-pol isolation:</strong> transmitting on the wrong polarization, or with a poorly set skew, interferes with other users. That's why commissioning includes a cross-pol check with the satellite operator.</li>
+</ul>
+
+<h2>What degrades a link</h2>
+<ul>
+<li><strong>Free-space path loss</strong>: huge (~200 dB to GEO) but predictable. See the <a href="link-budget.html">link budget</a>.</li>
+<li><strong>Rain fade</strong>: grows sharply above ~10 GHz, so Ku and especially Ka need fade margin or adaptive coding/modulation.</li>
+<li><strong>Atmospheric absorption and scintillation</strong>: worse at low elevation angles, where the signal travels through more atmosphere.</li>
+<li><strong>Pointing error</strong>: off-axis loss rises fast with dish size and frequency.</li>
+<li><strong>Interference</strong>: adjacent satellites, cross-pol, terrestrial emitters, and your own site's other transmitters.</li>
+<li><strong>Sun outage</strong>: twice a year around the equinoxes, the sun sits behind a GEO satellite from your site for a few minutes a day.</li>
+<li><strong>Blockage</strong>: terrain, buildings, vehicles. Check the look angle against the horizon.</li>
+</ul>
+
+<h2>Key terms</h2>
+<div class="table-wrap"><table>
+<tbody>
+<tr><th>EIRP</th><td>Effective isotropic radiated power: transmit power + antenna gain − line losses (dBW).</td></tr>
+<tr><th>G/T</th><td>Receive figure of merit: antenna gain ÷ system noise temperature (dB/K). Higher is better.</td></tr>
+<tr><th>C/N, C/N₀</th><td>Carrier-to-noise ratio, and carrier-to-noise density (per Hz).</td></tr>
+<tr><th>Eb/N₀</th><td>Energy per bit ÷ noise density. The modem needs a minimum value for a given modulation and coding (MODCOD).</td></tr>
+<tr><th>Transponder / beam</th><td>The satellite's channel / coverage area. Spot beams trade coverage for gain.</td></tr>
+<tr><th>BUC / LNB</th><td>Block upconverter (transmit amplifier + upconversion) / low-noise block downconverter (receive).</td></tr>
+</tbody></table></div>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Java">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Java</h1>
+<p class="lead">Your main application language: Spring Boot, JPA, REST, and the robot's control software. This page covers modern Java (17/21 LTS) syntax and the Spring patterns you use most.</p>
+
+<h2>Toolchain</h2>
+<ul>
+<li>JDK: use an LTS release (17 or 21). Check with <code>java -version</code>.</li>
+<li>Build: Maven (<code>mvn clean verify</code>) or Gradle (<code>./gradlew build</code>). Use the wrapper scripts so everyone gets the same version.</li>
+<li>IDE: IntelliJ IDEA. Learn the refactorings (rename, extract method, introduce variable) and the debugger.</li>
+</ul>
+
+<h2>Modern syntax</h2>
+<pre><code>// local type inference
+var devices = new ArrayList&lt;Device&gt;();
+
+// records: immutable data carriers (Java 16+)
+public record Device(String host, int port) {}
+
+// switch expressions + pattern matching
+String kind = switch (port) {
+    case 22 -&gt; "ssh";
+    case 443 -&gt; "https";
+    default -&gt; "other";
+};
+if (obj instanceof Device d &amp;&amp; d.port() == 22) { ... }
+
+// text blocks
+String json = """
+    {"host": "sw1", "port": 22}
+    """;
+
+// Optional instead of null
+Optional&lt;Device&gt; found = repo.findByHost("sw1");
+String h = found.map(Device::host).orElse("unknown");</code></pre>
+
+<h2>Collections &amp; streams</h2>
+<pre><code>List&lt;Device&gt; ssh = devices.stream()
+    .filter(d -&gt; d.port() == 22)
+    .sorted(Comparator.comparing(Device::host))
+    .toList();
+
+Map&lt;Integer, List&lt;Device&gt;&gt; byPort = devices.stream()
+    .collect(Collectors.groupingBy(Device::port));
+
+int total = parts.stream().mapToInt(Part::cost).sum();</code></pre>
+<p class="small muted">Pick the collection by access pattern: <code>ArrayList</code> (indexed), <code>HashMap</code> (lookup by key), <code>HashSet</code> (uniqueness), <code>ArrayDeque</code> (queue/stack), <code>TreeMap</code> (sorted keys).</p>
+
+<h2>Spring Boot REST + JPA</h2>
+<pre><code>@Entity
+@Getter @Setter @NoArgsConstructor           // Lombok
+public class Part {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false) private String name;
+    private String subsystem;
+    private BigDecimal estCost;
+}
+
+public interface PartRepository extends JpaRepository&lt;Part, Long&gt; {
+    List&lt;Part&gt; findBySubsystem(String subsystem);     // derived query
+}
+
+@RestController
+@RequestMapping("/api/parts")
+@RequiredArgsConstructor
+public class PartController {
+    private final PartRepository repo;               // constructor injection
+
+    @GetMapping
+    public List&lt;Part&gt; all() { return repo.findAll(); }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Part create(@Valid @RequestBody Part p) { return repo.save(p); }
+}</code></pre>
+<ul>
+<li>Keep controllers thin. Put business logic in <code>@Service</code> classes and return DTOs rather than entities once the API is public.</li>
+<li>Configure via <code>application.yml</code> plus profiles (<code>dev</code>, <code>prod</code>). Keep secrets in environment variables.</li>
+<li>Security: Spring Security filter chain. Learn the session vs JWT trade-off.</li>
+</ul>
+
+<h2>Testing</h2>
+<pre><code>@SpringBootTest
+class PartServiceTest {
+    @Autowired PartService service;
+    @Test void totalsCost() {
+        assertEquals(new BigDecimal("150.00"), service.total(List.of(...)));
+    }
+}
+// @WebMvcTest for controllers (with MockMvc), @DataJpaTest for repositories</code></pre>
+
+<h2>Learning path</h2>
+<ul class="checklist" data-key="javaPath">
+<li data-id="oop">OOP fundamentals: encapsulation, interfaces, composition over inheritance</li>
+<li data-id="modern">Records, switch expressions, pattern matching, Optional</li>
+<li data-id="streams">Collections and streams fluently</li>
+<li data-id="exceptions">Exceptions: checked vs unchecked, try-with-resources</li>
+<li data-id="junit">JUnit 5 + Mockito</li>
+<li data-id="spring-rest">Spring Boot REST API with validation and error handling</li>
+<li data-id="jpa">JPA relationships (OneToMany, ManyToOne), lazy loading, N+1 queries</li>
+<li data-id="security">Spring Security: auth + roles</li>
+<li data-id="concurrency">Concurrency basics: ExecutorService, CompletableFuture (robot control loop)</li>
+<li data-id="pi4j">Pi4J / jSerialComm on the Raspberry Pi for the robot</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

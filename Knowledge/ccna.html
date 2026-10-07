@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCNA (200-301) — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="CCNA (200-301)">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>CCNA (200-301)</h1>
+<p class="lead">Cisco's associate-level networking cert: one exam covering fundamentals, switching, routing, services, security and automation. Valid for 3 years, renewed by retaking an exam or earning continuing-education credits.</p>
+
+<div class="callout warn"><p><strong>Blueprint change on the horizon.</strong> Cisco has announced CCNA v2.0, first testing <strong>3 Feb 2027</strong>. The current v1.1 exam stays available until then. If you'll be ready before early February 2027, study v1.1. Otherwise go straight to v2.0. Always confirm against the official exam topics on Cisco's site before booking.</p></div>
+
+<h2>Exam domains</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>v1.1 (current, until Feb 2027)</th><th>Weight</th><th>v2.0 (from 3 Feb 2027)</th><th>Weight</th></tr></thead>
+<tbody>
+<tr><td>Network Fundamentals</td><td>20%</td><td>Network Infrastructure &amp; Connectivity</td><td>25%</td></tr>
+<tr><td>Network Access</td><td>20%</td><td>Switching &amp; Network Access</td><td>25%</td></tr>
+<tr><td>IP Connectivity</td><td>25%</td><td>IP Routing</td><td>20%</td></tr>
+<tr><td>IP Services</td><td>10%</td><td>Network Services &amp; Security</td><td>20%</td></tr>
+<tr><td>Security Fundamentals</td><td>15%</td><td>AI, and Network Operations &amp; Management</td><td>10%</td></tr>
+<tr><td>Automation &amp; Programmability</td><td>10%</td><td></td><td></td></tr>
+</tbody></table></div>
+<p class="small muted">v2.0 headline changes: it adds hypervisors/VMs/containers, IPv6 static routing and OSPFv3, HSRP/VRRP, SFTP/SCP, IPsec VPNs, and an AI-in-operations topic (agentic AI and prompt selection) alongside SNMP, syslog and Ansible.</p>
+
+<h2>Study checklist</h2>
+<p class="small muted">Tick topics as you can explain them <em>and</em> configure them in a lab. Progress is saved in this browser.</p>
+<ul class="checklist" data-key="ccnaChecklist">
+<li data-id="osi">OSI / TCP-IP models, TCP vs UDP, common ports</li>
+<li data-id="cabling">Cabling, interface errors (CRC, duplex mismatch, speed)</li>
+<li data-id="subnet">IPv4 subnetting by hand in under a minute: <a href="subnetting.html">practice</a></li>
+<li data-id="ipv6">IPv6 addressing types, SLAAC, EUI-64</li>
+<li data-id="vlans">VLANs, 802.1Q trunks, native VLAN, inter-VLAN routing (router-on-a-stick, SVIs)</li>
+<li data-id="stp">Rapid PVST+: root election, port roles, PortFast, BPDU guard</li>
+<li data-id="etherchannel">EtherChannel with LACP</li>
+<li data-id="cdp">CDP / LLDP</li>
+<li data-id="wireless">Wireless: WLC architectures, AP modes, WPA2/WPA3</li>
+<li data-id="routing-table">Reading the routing table: longest match, AD, metric</li>
+<li data-id="static">IPv4 and IPv6 static and floating static routes</li>
+<li data-id="ospf">Single-area OSPFv2 (and OSPFv3 for v2.0)</li>
+<li data-id="fhrp">First-hop redundancy: HSRP (VRRP for v2.0)</li>
+<li data-id="nat">NAT / PAT, DHCP, DNS, NTP, SNMP, syslog</li>
+<li data-id="acl">Standard and extended IPv4 ACLs</li>
+<li data-id="l2sec">Port security, DHCP snooping, dynamic ARP inspection</li>
+<li data-id="aaa">AAA, local users, SSH, (SFTP/SCP for v2.0)</li>
+<li data-id="vpn">VPN concepts (IPsec configuration for v2.0)</li>
+<li data-id="auto">Automation: REST APIs, JSON, controller-based networking, Ansible</li>
+<li data-id="ai">v2.0 only: AI in network operations</li>
+</ul>
+
+<h2>Core IOS commands</h2>
+<pre><code>enable / configure terminal / end / write memory (copy run start)
+show running-config | section ospf        ! filter output
+show ip interface brief                   ! up/up? addressing?
+show interfaces gi0/1                      ! errors, duplex, speed
+show vlan brief / show interfaces trunk
+show spanning-tree vlan 10
+show etherchannel summary
+show ip route / show ipv6 route
+show ip ospf neighbor / show ip protocols
+show ip nat translations
+show access-lists
+show cdp neighbors detail / show lldp neighbors
+show logging / show clock / show ntp status
+debug ip ospf adj  →  undebug all          ! lab only</code></pre>
+
+<h2>Resources</h2>
+<ul>
+<li>Official exam topics: Cisco Learning Network, CCNA page (the source of truth for the blueprint)</li>
+<li>Cisco Packet Tracer (free through Cisco Networking Academy), or real gear / CML for labs</li>
+<li>Official Cert Guide, Vol. 1 &amp; 2 (2nd ed. covers v1.1)</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

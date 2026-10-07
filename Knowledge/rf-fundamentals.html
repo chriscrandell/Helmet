@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RF fundamentals — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="RF fundamentals">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>RF fundamentals</h1>
+<p class="lead">The physics behind every radio, SATCOM terminal and Wi-Fi link: spectrum, dB math, antennas, matching and line of sight.</p>
+
+<h2>Spectrum</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Band</th><th>Frequency</th><th>Wavelength</th><th>Behaviour</th></tr></thead>
+<tbody>
+<tr><td>HF</td><td>3 – 30 MHz</td><td>100 – 10 m</td><td>Ground wave and skywave (ionospheric refraction), so beyond line of sight</td></tr>
+<tr><td>VHF</td><td>30 – 300 MHz</td><td>10 – 1 m</td><td>Mostly line of sight, some diffraction over terrain</td></tr>
+<tr><td>UHF</td><td>300 MHz – 3 GHz</td><td>1 m – 10 cm</td><td>Line of sight. Tactical radios, UHF SATCOM, cellular, Wi-Fi 2.4</td></tr>
+<tr><td>SHF</td><td>3 – 30 GHz</td><td>10 – 1 cm</td><td>Strict line of sight, directional antennas. SATCOM, microwave links</td></tr>
+<tr><td>EHF</td><td>30 – 300 GHz</td><td>1 cm – 1 mm</td><td>High atmospheric and rain absorption</td></tr>
+</tbody></table></div>
+<p><strong>Wavelength:</strong> λ (m) = 300 ÷ f (MHz). So a half-wave dipole at 30 MHz is about 5 m long (in practice ~95% of that, because of end effects).</p>
+
+<h2>dB math</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Change</th><th>Power ratio</th><th></th><th>dBm</th><th>Power</th></tr></thead>
+<tbody>
+<tr><td>+3 dB</td><td>×2</td><td></td><td>0 dBm</td><td>1 mW</td></tr>
+<tr><td>+6 dB</td><td>×4</td><td></td><td>10 dBm</td><td>10 mW</td></tr>
+<tr><td>+10 dB</td><td>×10</td><td></td><td>20 dBm</td><td>100 mW</td></tr>
+<tr><td>+20 dB</td><td>×100</td><td></td><td>30 dBm</td><td>1 W</td></tr>
+<tr><td>−3 dB</td><td>×½</td><td></td><td>40 dBm</td><td>10 W</td></tr>
+<tr><td>−10 dB</td><td>×1/10</td><td></td><td>50 dBm</td><td>100 W</td></tr>
+</tbody></table></div>
+<ul>
+<li>dBm = 10·log10(mW). dBW = dBm − 30.</li>
+<li>dBi = gain vs an isotropic radiator. dBd = gain vs a dipole. dBi = dBd + 2.15.</li>
+<li>Chain math: transmitter power (dBm) − cable loss + antenna gain = EIRP.</li>
+</ul>
+
+<h2>Antennas</h2>
+<ul>
+<li><strong>Gain is focus, not added power.</strong> A high-gain antenna puts more energy in some directions by taking it from others.</li>
+<li><strong>Omnidirectional</strong> (whips, verticals): 360° horizontal coverage. Easy to set up, but it radiates everywhere, which makes it easier to detect and to jam.</li>
+<li><strong>Directional</strong> (Yagi, log-periodic, panel, dish): higher gain, narrower beam, less energy where you don't want it. Must be aimed.</li>
+<li><strong>Polarization</strong> must match between ends. Vertical-to-horizontal mismatch can cost 20 dB or more on line-of-sight links.</li>
+<li>Height usually helps more than power on VHF/UHF line-of-sight links.</li>
+</ul>
+
+<h2>Matching: VSWR and return loss</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>VSWR</th><th>Return loss</th><th>Power reflected</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>1.0 : 1</td><td>∞</td><td>0%</td><td>Perfect</td></tr>
+<tr><td>1.5 : 1</td><td>14.0 dB</td><td>4%</td><td>Good</td></tr>
+<tr><td>2.0 : 1</td><td>9.5 dB</td><td>11%</td><td>Usable, so check the cause</td></tr>
+<tr><td>3.0 : 1</td><td>6.0 dB</td><td>25%</td><td>Fault: cable, connector, antenna or wrong band</td></tr>
+</tbody></table></div>
+<p class="small muted">High VSWR usually means a damaged or wet connector or cable, an antenna cut or tuned for a different frequency, or a missing ground/counterpoise.</p>
+
+<h2>Line of sight &amp; Fresnel zone</h2>
+<pre><code>Radio horizon (km) ≈ 4.12 × (√h1 + √h2)        h in metres, 4/3-earth
+First Fresnel radius (m) = 17.32 × √( d1·d2 / (f_GHz · D) )   d in km</code></pre>
+<p>Keep at least 60% of the first Fresnel zone clear at the worst point (usually mid-path). Visual line of sight isn't enough on longer microwave and UHF shots.</p>
+
+<h2>Emissions awareness</h2>
+<p>Every transmission can be detected and direction-found. The basic levers: transmit only what you need, at the lowest power that closes the link, through the most directional antenna practical, using terrain to mask the signal from likely threat directions. The planned <em>Antenna selection &amp; emissions</em> page will expand this from the white paper.</p>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

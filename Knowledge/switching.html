@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Switching &amp; switch-port checks — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Switching &amp; switch-port checks">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Switching &amp; switch-port checks</h1>
+<p class="lead">VLANs, trunks, spanning tree and EtherChannel. It ends with the switch-port check sequence for when a user, phone or uplink "doesn't work".</p>
+
+<h2>VLANs and trunks</h2>
+<ul>
+<li>Access port = one VLAN, untagged. Trunk = many VLANs, tagged with 802.1Q (a 4-byte tag carrying a 12-bit VLAN ID).</li>
+<li><strong>Native VLAN</strong> traffic crosses a trunk untagged and must match on both ends (CDP warns on a mismatch). Best practice: use an unused VLAN as native, and prune trunks with <code>switchport trunk allowed vlan</code>.</li>
+<li>Turn off DTP negotiation on user ports (<code>switchport mode access</code>, <code>switchport nonegotiate</code> on trunks).</li>
+<li>Inter-VLAN routing: router-on-a-stick (subinterfaces + <code>encapsulation dot1q</code>) or Layer-3 switch SVIs (<code>ip routing</code>).</li>
+</ul>
+
+<h2>Spanning tree</h2>
+<ul>
+<li>Prevents Layer-2 loops. Cisco default is Rapid PVST+ (802.1w per VLAN).</li>
+<li>Root bridge = lowest bridge ID (priority, default 32768 + VLAN ID, then MAC). Set it deliberately: <code>spanning-tree vlan 10 root primary</code> or priority 4096 on the core.</li>
+<li>Port roles: root, designated, alternate/backup. RSTP states: discarding, learning, forwarding.</li>
+<li>Edge ports: <code>spanning-tree portfast</code> + <code>spanning-tree bpduguard enable</code>. A BPDU arriving on that port puts it into err-disabled.</li>
+</ul>
+
+<h2>EtherChannel</h2>
+<ul>
+<li>Bundles links into one logical link. LACP (802.3ad): <code>active</code>/<code>passive</code>. PAgP (Cisco): <code>desirable</code>/<code>auto</code>. Passive+passive or auto+auto never forms.</li>
+<li>Member ports must match: speed, duplex, mode (access/trunk), allowed and native VLANs.</li>
+</ul>
+
+<h2>Switch-port check sequence</h2>
+<p>Work it in this order, Layer 1 up. Most "network down" calls end in the first three steps.</p>
+<ol>
+<li><strong>Is the port up?</strong> <code>show interfaces status</code>. Look for connected / notconnect / err-disabled, and check VLAN, duplex and speed.</li>
+<li><strong>Physical errors?</strong> <code>show interfaces gi1/0/12</code>. Input errors/CRC mean cabling or a bad patch. Late collisions mean a duplex mismatch. Watch for increasing counters (<code>clear counters</code> first, then recheck).</li>
+<li><strong>Err-disabled?</strong> <code>show interfaces status err-disabled</code> and <code>show errdisable recovery</code>. Fix the cause (BPDU guard, port security, link flap), then <code>shutdown</code> / <code>no shutdown</code>.</li>
+<li><strong>Right VLAN?</strong> <code>show vlan brief</code> and <code>show interfaces gi1/0/12 switchport</code>. Check the access VLAN, voice VLAN, and that the VLAN exists and is active.</li>
+<li><strong>Is the device seen?</strong> <code>show mac address-table interface gi1/0/12</code>. No MAC means the device isn't sending (NIC, cable, or device asleep).</li>
+<li><strong>Port security?</strong> <code>show port-security interface gi1/0/12</code>. Look at violation count and max MACs.</li>
+<li><strong>Uplink side:</strong> <code>show interfaces trunk</code> (is the VLAN allowed and forwarding?), <code>show spanning-tree vlan 10</code> (blocked?), <code>show etherchannel summary</code> (are members bundled with flag P?).</li>
+<li><strong>Neighbors:</strong> <code>show cdp neighbors</code> / <code>show lldp neighbors</code> confirm what's actually plugged in where.</li>
+<li><strong>Power (phones/APs):</strong> <code>show power inline gi1/0/12</code>.</li>
+</ol>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Build Log</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page narrow">
+    <header class="hero">
+      <div class="eyebrow">Humanoid robot</div>
+      <h1>Build log</h1>
+      <p>What got done, what fought back, and what's next. Entries are saved in this browser. Export a backup now and then.</p>
+      <div id="backup"></div>
+    </header>
+    <div id="log"></div>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>
+  HelmetKit.log("#log", {
+    key: "robotBuildLog",
+    titleField: "title",
+    empty: "No entries yet. The first one might be the parts order or the first skeleton test-fit.",
+    fields: [
+      { name: "date", label: "Date", type: "date" },
+      { name: "title", label: "Title" },
+      { name: "subsystem", label: "Subsystem", type: "select", options: ["General", "Skeleton / frame", "Servos", "Electronics", "Sensors", "Power", "Software (Java)", "Firmware (Arduino)", "3D-printed panels"] },
+      { name: "hours", label: "Hours", type: "number" },
+      { name: "work", label: "Work done", type: "textarea" },
+      { name: "problems", label: "Problems / lessons", type: "textarea" },
+      { name: "next", label: "Next step", type: "textarea" }
+    ]
+  });
+  HelmetKit.backup("#backup", ["robotBuildLog", "robotDecisions", "robotServosInHand", "robotServoCurrents"], "robot");
+</script>
+</body>
+</html>

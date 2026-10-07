@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servo Plan</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Humanoid robot</div>
+      <h1>Servo plan &amp; power budget</h1>
+      <p>23 servos across neck, arms, torso and legs. Tick a joint off when the servos are in hand. The calculator below sizes the servo supply from the datasheet figures you enter. Nothing is pre-filled, so the numbers are always yours.</p>
+    </header>
+
+    <section class="grid">
+      <div class="stat"><span>DS3218 (high torque)</span><strong>13</strong></div>
+      <div class="stat"><span>FS5115M-FB (position feedback)</span><strong>8</strong></div>
+      <div class="stat"><span>MG90S (micro)</span><strong>2</strong></div>
+      <div class="stat"><span>In hand</span><strong id="inHand">0 / 23</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>Joint map</h2>
+      <ul class="checklist" data-key="robotServosInHand" id="joints">
+        <li data-id="neck" data-qty="2"><strong>Neck</strong> — 2 × FS5115M-FB</li>
+        <li data-id="shoulders" data-qty="4"><strong>Shoulders</strong> — 4 × DS3218</li>
+        <li data-id="elbows" data-qty="2"><strong>Elbows</strong> — 2 × FS5115M-FB</li>
+        <li data-id="wrists" data-qty="2"><strong>Wrists</strong> — 2 × MG90S</li>
+        <li data-id="hands" data-qty="2"><strong>Hands</strong> — 2 × FS5115M-FB</li>
+        <li data-id="torso" data-qty="1"><strong>Torso</strong> — 1 × DS3218</li>
+        <li data-id="hips" data-qty="4"><strong>Hips</strong> — 4 × DS3218</li>
+        <li data-id="knees" data-qty="2"><strong>Knees</strong> — 2 × FS5115M-FB</li>
+        <li data-id="ankles" data-qty="4"><strong>Ankles</strong> — 4 × DS3218</li>
+      </ul>
+      <p class="small muted">Feedback servos (FS5115M-FB) have an extra analog position wire. Each one uses an analog input on the Mega. See the analog-input note on the <a href="index.html">overview</a>.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Servo supply calculator</h2>
+      <p class="muted small">Enter running and stall current per servo from each datasheet, at the voltage you'll run them. "Moving at once" is the share of servos you expect under load at the same moment (walking loads the legs hard). Size the supply above the result with headroom.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Model</th><th>Qty</th><th>Running current (A)</th><th>Stall current (A)</th></tr></thead>
+        <tbody id="calcRows"></tbody>
+      </table></div>
+      <div class="form-grid">
+        <label>Moving at once (%)<input id="simul" type="number" min="0" max="100" value="50"></label>
+        <label>Supply voltage (V)<input id="volts" type="number" min="0" step="0.1" placeholder="e.g. your servo rail"></label>
+        <label>Headroom (%)<input id="headroom" type="number" min="0" value="25"></label>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <div class="stat"><span>Typical draw (moving share at running current)</span><strong id="typ">—</strong></div>
+        <div class="stat"><span>Worst case (moving share at stall)</span><strong id="worst">—</strong></div>
+        <div class="stat"><span>Suggested supply rating</span><strong id="rating">—</strong></div>
+      </div>
+    </section>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>
+  HelmetKit.checklists();
+  var models = [{ id: "DS3218", qty: 13 }, { id: "FS5115M-FB", qty: 8 }, { id: "MG90S", qty: 2 }];
+  var saved = HelmetKit.read("robotServoCurrents", {});
+  document.getElementById("calcRows").innerHTML = models.map(function (m) {
+    var s = saved[m.id] || {};
+    return "<tr><td>" + m.id + "</td><td>" + m.qty + "</td>" +
+      '<td><input type="number" step="0.01" min="0" data-m="' + m.id + '" data-k="run" value="' + (s.run != null ? s.run : "") + '"></td>' +
+      '<td><input type="number" step="0.01" min="0" data-m="' + m.id + '" data-k="stall" value="' + (s.stall != null ? s.stall : "") + '"></td></tr>';
+  }).join("");
+  ["simul", "volts", "headroom"].forEach(function (id) {
+    var v = HelmetKit.read("robotCalc_" + id, null);
+    if (v != null) document.getElementById(id).value = v;
+  });
+
+  function calc() {
+    var cur = HelmetKit.read("robotServoCurrents", {});
+    var share = Number(document.getElementById("simul").value || 0) / 100;
+    var head = 1 + Number(document.getElementById("headroom").value || 0) / 100;
+    var volts = Number(document.getElementById("volts").value || 0);
+    var run = 0, stall = 0, complete = true;
+    models.forEach(function (m) {
+      var c = cur[m.id] || {};
+      if (c.run == null || c.stall == null) complete = false;
+      run += (c.run || 0) * m.qty;
+      stall += (c.stall || 0) * m.qty;
+    });
+    function fmt(a) { return a.toFixed(1) + " A" + (volts ? " · " + Math.round(a * volts) + " W" : ""); }
+    document.getElementById("typ").textContent = complete ? fmt(run * share) : "enter all currents";
+    document.getElementById("worst").textContent = complete ? fmt(stall * share) : "—";
+    document.getElementById("rating").textContent = complete ? fmt(stall * share * head) : "—";
+  }
+  document.addEventListener("input", function (e) {
+    var m = e.target.getAttribute("data-m");
+    if (m) {
+      var cur = HelmetKit.read("robotServoCurrents", {});
+      cur[m] = cur[m] || {};
+      var k = e.target.getAttribute("data-k");
+      if (e.target.value === "") delete cur[m][k]; else cur[m][k] = Number(e.target.value);
+      HelmetKit.write("robotServoCurrents", cur);
+    } else if (e.target.id) {
+      HelmetKit.write("robotCalc_" + e.target.id, e.target.value);
+    }
+    calc();
+  });
+
+  function updateInHand() {
+    var s = HelmetKit.read("robotServosInHand", {});
+    var n = 0;
+    document.querySelectorAll("#joints li").forEach(function (li) { if (s[li.dataset.id]) n += Number(li.dataset.qty); });
+    document.getElementById("inHand").textContent = n + " / 23";
+  }
+  document.getElementById("joints").addEventListener("checklist-change", updateInHand);
+  updateInHand();
+  calc();
+</script>
+</body>
+</html>

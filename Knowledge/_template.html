@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+  Wiki page template.
+  1. Copy this file to a new name in the Knowledge folder (e.g. ospf-deep-dive.html).
+  2. Change the <title>, data-page-title and the content between the markers.
+  3. Register it in wiki-data.js (file, title, summary, status) so it shows in
+     the sidebar, search and on the wiki main page.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Page — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="New Page">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>New page title</h1>
+<p class="lead">One or two sentences: what this page covers and who it's for.</p>
+
+<h2>Section</h2>
+<p>Content. Useful building blocks:</p>
+<div class="callout"><p>A green callout for key points.</p></div>
+<div class="callout warn"><p>An amber callout for cautions.</p></div>
+<pre><code>commands or code</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>Column</th><th>Column</th></tr></thead>
+<tbody><tr><td>Cell</td><td>Cell</td></tr></tbody>
+</table></div>
+<ul class="checklist" data-key="uniqueKeyForThisPage">
+<li data-id="item1">A checklist item (saved in the browser)</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

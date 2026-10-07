@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power planning — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Power planning">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Power planning</h1>
+<p class="lead">Will the generator carry the package? Total up equipment draw, compare it with generator capacity, and leave headroom for start-up surges and a hot day.</p>
+
+<h2>The formulas</h2>
+<pre><code>DC, or AC with PF = 1:   W  = V × A
+Single-phase AC:          VA = V × A        W = V × A × PF
+Three-phase AC:           VA = √3 × V(line-line) × A     W = VA × PF
+kW = kVA × PF             Generators are often rated in both kW and kVA. Respect both.</code></pre>
+<ul>
+<li><strong>Nameplate ratings are maximums.</strong> Real running draw is often lower. Measure with a clamp meter when you can, and keep the nameplate figure for worst-case planning.</li>
+<li><strong>Start-up surge:</strong> motors, compressors and ECUs/air conditioners can pull several times their running current for a moment. Size for the largest motor starting while everything else runs.</li>
+<li><strong>Power factor:</strong> IT loads with modern power supplies are close to 1. Motors are lower. If you don't know, 0.8 is a common planning value.</li>
+</ul>
+
+<h2>Load calculator</h2>
+<div class="calc">
+  <div id="pp-table"></div>
+  <div class="btn-row"><button class="btn small" type="button" id="pp-add">+ Add equipment</button></div>
+  <div class="form-grid">
+    <label>Generator rating (kW)<input id="pp-gen" type="number" step="any" min="0"></label>
+    <label>Max planned loading (%)<input id="pp-max" type="number" step="any" value="80"></label>
+    <label>Derating for altitude/heat (%)<input id="pp-derate" type="number" step="any" value="0" title="From the generator TM"></label>
+  </div>
+  <div class="out" id="pp-out"></div>
+</div>
+<p class="small muted">Enter running watts per item (or volts × amps). "Surge ×" is the start-up multiple for motor loads (1 for IT gear). Rows are saved in this browser. Derating values come from the generator's TM.</p>
+
+<h2>Generator loading rules of thumb</h2>
+<ul>
+<li>Plan to run at roughly <strong>50–80%</strong> of the derated rating. That leaves room for surges and added equipment.</li>
+<li><strong>Don't run diesels lightly loaded for long periods</strong> (well under ~30%). Unburnt fuel builds up ("wet stacking"). Use load banks or right-size the generator.</li>
+<li>Capacity drops with <strong>altitude and high temperature</strong>. Use the derating table in the TM.</li>
+<li>Plan <strong>N+1</strong> (a spare generator able to carry the critical load) for anything that can't go down, and a UPS to ride through the switchover.</li>
+</ul>
+
+<h2>Distribution</h2>
+<ul>
+<li>Balance the load across phases on three-phase systems. Badly unbalanced phases overheat the generator and trip breakers.</li>
+<li>Keep continuous loads on a circuit at or below ~80% of the breaker rating.</li>
+<li>Ground and bond per the TM and the site grounding plan. Many "network" and RF problems are actually grounding problems.</li>
+<li>Label every cable and panel. The next shift has to troubleshoot it at night.</li>
+</ul>
+
+<script>
+(function () {
+  var KEY = "powerPlanLoads";
+  var tbl = HelmetKit.table("#pp-table", {
+    key: KEY,
+    empty: "No equipment yet. Add each item in the package.",
+    columns: [
+      { name: "item", label: "Equipment", width: 170 },
+      { name: "qty", label: "Qty", type: "number", width: 60 },
+      { name: "watts", label: "Running W (each)", type: "number", width: 110 },
+      { name: "volts", label: "or V", type: "number", width: 70 },
+      { name: "amps", label: "× A", type: "number", width: 70 },
+      { name: "surge", label: "Surge ×", type: "number", width: 70 }
+    ],
+    onChange: calc
+  });
+  document.getElementById("pp-add").addEventListener("click", function () { tbl.add({ item: "", qty: 1, surge: 1 }); });
+  ["gen", "max", "derate"].forEach(function (id) {
+    var el = document.getElementById("pp-" + id);
+    var s = HelmetKit.read("powerPlan_" + id, null);
+    if (s != null) el.value = s;
+    el.addEventListener("input", function () { HelmetKit.write("powerPlan_" + id, el.value); calc(); });
+  });
+  function calc(rows) {
+    rows = rows || tbl.rows();
+    var run = 0, worstSurge = 0;
+    rows.forEach(function (r) {
+      var each = Number(r.watts) || (Number(r.volts) * Number(r.amps)) || 0;
+      var q = Number(r.qty) || 0;
+      run += each * q;
+      var extra = each * Math.max(0, (Number(r.surge) || 1) - 1);
+      if (extra > worstSurge) worstSurge = extra;
+    });
+    var gen = Number(document.getElementById("pp-gen").value) * 1000;
+    var derated = gen * (1 - (Number(document.getElementById("pp-derate").value) || 0) / 100);
+    var maxPct = Number(document.getElementById("pp-max").value) || 80;
+    var load = derated ? run / derated * 100 : NaN;
+    var peak = derated ? (run + worstSurge) / derated * 100 : NaN;
+    function kw(w) { return (w / 1000).toFixed(2) + " kW"; }
+    var verdict = !derated ? "enter generator rating" : load > maxPct || peak > 100 ? "❌ Over plan" : load < 30 ? "⚠ Lightly loaded" : "✅ Within plan";
+    var out = [["Running load", kw(run)], ["Peak (largest surge)", kw(run + worstSurge)], ["Derated capacity", derated ? kw(derated) : "—"],
+      ["Running loading", isFinite(load) ? load.toFixed(0) + "%" : "—"], ["Peak loading", isFinite(peak) ? peak.toFixed(0) + "%" : "—"], ["Verdict", verdict]];
+    document.getElementById("pp-out").innerHTML = out.map(function (x) { return "<div>" + x[0] + "<strong>" + x[1] + "</strong></div>"; }).join("");
+  }
+  calc();
+})();
+</script>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

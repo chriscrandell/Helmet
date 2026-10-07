@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCNP Enterprise — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="CCNP Enterprise">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>CCNP Enterprise</h1>
+<p class="lead">Professional-level enterprise networking. Two exams: the <strong>ENCOR 350-401</strong> core and <strong>one concentration</strong> exam of your choice. Passing ENCOR also qualifies you to attempt the CCIE Enterprise lab. Valid for 3 years.</p>
+
+<h2>ENCOR 350-401 domains</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Domain</th><th>Weight</th><th>Highlights</th></tr></thead>
+<tbody>
+<tr><td>Architecture</td><td>15%</td><td>Enterprise design (2-/3-tier, fabric), SD-WAN and SD-Access concepts, QoS, CEF</td></tr>
+<tr><td>Virtualization</td><td>10%</td><td>Hypervisors, VRFs, GRE/IPsec, LISP and VXLAN concepts</td></tr>
+<tr><td>Infrastructure</td><td>30%</td><td>Trunking, EtherChannel, RSTP/MST, OSPF and EIGRP in depth, eBGP, wireless, IP services</td></tr>
+<tr><td>Network Assurance</td><td>10%</td><td>Debugs, conditional debugs, SPAN/RSPAN/ERSPAN, IP SLA, NetFlow, NETCONF/RESTCONF</td></tr>
+<tr><td>Security</td><td>20%</td><td>Device access control, CoPP, ACLs, wireless security, 802.1X, threat defense</td></tr>
+<tr><td>Automation (and AI)</td><td>15%</td><td>Python, JSON/YANG, REST APIs, EEM, Ansible, Catalyst Center / SD-WAN Manager APIs</td></tr>
+</tbody></table></div>
+<p class="small muted">Weights as published for the current blueprint. Cisco revises these, so check the official ENCOR exam topics before you start.</p>
+
+<h2>Concentration exams</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Exam</th><th>Focus</th><th>Fit for expeditionary comms</th></tr></thead>
+<tbody>
+<tr><td>ENARSI 300-410</td><td>Advanced routing: OSPF/EIGRP/BGP troubleshooting, redistribution, DMVPN, infrastructure security</td><td>Strongest day-to-day fit: routing and VPN troubleshooting</td></tr>
+<tr><td>300-415 (Catalyst SD-WAN)</td><td>SD-WAN design, deployment and operations</td><td>Good if units adopt SD-WAN transport</td></tr>
+<tr><td>ENSLD 300-420</td><td>Enterprise network design</td><td>Planning and engineering roles</td></tr>
+<tr><td>ENWLSD 300-425 / ENWLSI 300-430</td><td>Wireless design / implementation</td><td>Wireless-heavy deployments</td></tr>
+</tbody></table></div>
+<p class="small muted">Concentration lineup as of the v1.1 blueprint. Cisco has been reshuffling automation exams, so confirm the current list.</p>
+
+<h2>Suggested path</h2>
+<ol>
+<li>CCNA solid first, especially subnetting, OSPF and STP without thinking.</li>
+<li>ENCOR: build a lab topology you keep extending (CML, EVE-NG or GNS3 on the Proxmox host).</li>
+<li>ENARSI next: it reuses most of ENCOR's routing, so book it soon after ENCOR while it's fresh.</li>
+<li>Automate your own lab with Python: see <a href="python.html">Python</a> (Netmiko and the ipaddress module).</li>
+</ol>
+
+<h2>Study checklist</h2>
+<ul class="checklist" data-key="ccnpChecklist">
+<li data-id="lab">Lab environment built and saved (topology + startup configs)</li>
+<li data-id="ospf-adv">OSPF: area types, LSAs, summarization, path selection</li>
+<li data-id="eigrp-adv">EIGRP: named mode, stub, summarization, variance</li>
+<li data-id="bgp">BGP: neighbors, path attributes, best-path selection, route maps</li>
+<li data-id="redistribution">Redistribution and loop prevention (tags, filtering)</li>
+<li data-id="mst">RSTP / MST tuning</li>
+<li data-id="tunnels">GRE, IPsec, DMVPN</li>
+<li data-id="vrf">VRF-lite</li>
+<li data-id="qos">QoS: classification, marking, queuing</li>
+<li data-id="assurance">IP SLA, NetFlow, SPAN, conditional debugging</li>
+<li data-id="security">CoPP, 802.1X, AAA with TACACS+/RADIUS</li>
+<li data-id="automation">NETCONF/RESTCONF + YANG, Python, Ansible</li>
+<li data-id="encor-booked">ENCOR booked</li>
+<li data-id="conc-booked">Concentration exam booked</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

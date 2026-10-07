@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python — Knowledge Wiki</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="wiki.css" />
+  <script src="../assets/helmet-kit.js"></script>
+</head>
+<body data-wiki data-page-title="Python">
+<script src="../assets/site-nav.js"></script>
+<div class="wiki-layout">
+<aside id="wiki-side"></aside>
+<article class="wiki-article">
+<!-- ===== Page content: edit freely below this line ===== -->
+<h1>Python</h1>
+<p class="lead">The glue language for automation, scripting and quick tools. You already use it with Flask. This page is the cheat sheet plus the network-automation angle.</p>
+
+<h2>Setup</h2>
+<pre><code>python3 -m venv .venv            # one virtual env per project
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install flask netmiko        # install into the venv
+pip freeze &gt; requirements.txt    # pin what you used
+pip install -r requirements.txt  # rebuild elsewhere</code></pre>
+
+<h2>Syntax cheat sheet</h2>
+<pre><code># data structures
+nums  = [3, 1, 2]                 # list (ordered, mutable)
+point = (4, 5)                    # tuple (immutable)
+seen  = {"a", "b"}                # set (unique)
+dev   = {"host": "sw1", "port": 22}  # dict
+
+# comprehensions
+squares = [n * n for n in nums if n &gt; 1]
+by_host = {d["host"]: d for d in devices}
+
+# f-strings
+print(f"{dev['host']:&lt;10} port {dev['port']}")
+
+# unpacking / enumerate / zip
+for i, (name, ip) in enumerate(zip(names, ips), start=1): ...
+
+# functions with defaults, type hints
+def ping(host: str, count: int = 4) -&gt; bool: ...
+
+# files (always with a context manager)
+with open("hosts.txt") as f:
+    hosts = [line.strip() for line in f if line.strip()]
+
+# exceptions
+try:
+    risky()
+except (TimeoutError, ConnectionError) as e:
+    log.warning("failed: %s", e)
+finally:
+    cleanup()
+
+# classes / dataclasses
+from dataclasses import dataclass
+@dataclass
+class Device:
+    host: str
+    platform: str = "cisco_ios"</code></pre>
+
+<h2>Standard-library gems</h2>
+<ul>
+<li><code>pathlib</code>: paths as objects (<code>Path("logs").glob("*.txt")</code>)</li>
+<li><code>ipaddress</code>: subnetting in code (example below)</li>
+<li><code>json</code>, <code>csv</code>: read and write structured data</li>
+<li><code>subprocess</code>: run system commands (<code>subprocess.run([...], capture_output=True, text=True)</code>)</li>
+<li><code>argparse</code>: proper command-line tools</li>
+<li><code>logging</code>: use it instead of print in anything that runs unattended</li>
+<li><code>concurrent.futures</code>: run against 50 devices in parallel with a thread pool</li>
+</ul>
+
+<h2>Network automation</h2>
+<pre><code>import ipaddress
+net = ipaddress.ip_network("10.14.32.0/21")
+print(net.num_addresses, net.broadcast_address)   # 2048 10.14.39.255
+for sub in net.subnets(new_prefix=24):             # carve /24s
+    print(sub)
+ipaddress.ip_address("10.14.37.200") in net        # True</code></pre>
+<pre><code># Netmiko: SSH to network devices (pip install netmiko)
+from netmiko import ConnectHandler
+dev = {"device_type": "cisco_ios", "host": "10.0.0.1",
+       "username": "admin", "password": getpass()}
+with ConnectHandler(**dev) as conn:
+    print(conn.send_command("show ip interface brief"))
+    conn.send_config_set(["interface gi0/1", "description uplink"])</code></pre>
+<p class="small muted">Never hard-code credentials. Use <code>getpass</code>, environment variables or a vault. Lab first, and get approval before pointing scripts at operational networks.</p>
+
+<h2>Flask in 10 lines</h2>
+<pre><code>from flask import Flask, jsonify, request
+app = Flask(__name__)
+
+@app.get("/api/devices")
+def list_devices():
+    return jsonify(DEVICES)
+
+@app.post("/api/devices")
+def add_device():
+    DEVICES.append(request.get_json())
+    return {"ok": True}, 201
+# flask --app app run --debug</code></pre>
+
+<h2>Learning path</h2>
+<ul class="checklist" data-key="pythonPath">
+<li data-id="basics">Core syntax, data structures, comprehensions</li>
+<li data-id="venv">Virtual environments + requirements files on every project</li>
+<li data-id="files">Files, CSV/JSON, pathlib</li>
+<li data-id="oop">Classes, dataclasses, modules and packages</li>
+<li data-id="testing">pytest: write tests for one existing script</li>
+<li data-id="cli">argparse + logging: turn a script into a real tool</li>
+<li data-id="netmiko">Netmiko: pull configs from every lab device to files</li>
+<li data-id="parallel">Parallelize it with ThreadPoolExecutor</li>
+<li data-id="api">Call a REST API (requests) and parse the JSON</li>
+<li data-id="flask-app">Flask app with auth that you'd let someone else use</li>
+</ul>
+<!-- ===== End of page content ===== -->
+</article>
+</div>
+<script src="wiki-data.js"></script>
+<script src="wiki.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>

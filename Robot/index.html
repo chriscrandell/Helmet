@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humanoid Robot</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<script src="../assets/site-nav.js"></script>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Project · Design &amp; parts planning</div>
+      <h1>Humanoid robot</h1>
+      <p>An ~18-inch humanoid in the spirit of the AiNex ROS robot, but programmed in Java. Raspberry Pi 4 for high-level control, Arduino Mega for real-time servo and sensor I/O. Aluminum skeleton, 3D-printed outer panels with built-in cable channels, and full limb and torso mobility.</p>
+    </header>
+
+    <section class="grid">
+      <div class="stat"><span>Height</span><strong>~18 in</strong></div>
+      <div class="stat"><span>Servos planned</span><strong>23</strong></div>
+      <div class="stat"><span>Brains</span><strong>Pi 4 + Arduino Mega</strong></div>
+      <div class="stat"><span>Language</span><strong>Java</strong></div>
+    </section>
+
+    <section class="grid two">
+      <a class="link-card" href="servo-plan.html"><h3>Servo plan &amp; power budget →</h3><p>Every joint, servo model and count, an in-hand checklist, and a power-supply calculator.</p></a>
+      <a class="link-card" href="build-log.html"><h3>Build log →</h3><p>Dated record of work done, problems found and what's next.</p></a>
+    </section>
+
+    <section class="panel">
+      <h2>Architecture</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Subsystem</th><th>Plan</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>High-level control</td><td>Raspberry Pi 4 running the Java application: gait, balance and behaviour logic</td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Real-time I/O</td><td>Arduino Mega: servo pulses, sensor reads, safety cut-off</td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Actuation</td><td>Standard PWM servos. Feedback-capable (FS5115M-FB) where position sensing matters. See <a href="servo-plan.html">servo plan</a></td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Structure</td><td>Aluminum skeleton, 3D-printed exterior panels with cable channels</td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Foot sensing</td><td>Load cells in each foot for ground-contact and weight-shift detection</td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Hand sensing</td><td>Ten FSR 402 force sensors, one per fingertip</td><td><span class="badge muted">Planned</span></td></tr>
+          <tr><td>Power</td><td class="tbd">Battery chemistry, voltage and servo supply still to be chosen. Use the calculator on the servo plan page.</td><td><span class="badge warn">Open</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="panel">
+      <h2>Design questions to settle before buying</h2>
+      <p class="muted small">Tick these off as you decide them. Your progress is saved in this browser.</p>
+      <ul class="checklist" data-key="robotDecisions">
+        <li data-id="servo-power"><strong>Servo power supply.</strong> 13 DS3218s can each pull several amps at stall. They need their own high-current supply or UBEC, kept separate from the Pi's 5 V logic supply, with a common ground. Size it from datasheet stall current on the servo plan page.</li>
+        <li data-id="analog-inputs"><strong>Analog input count.</strong> 8 feedback servos plus 10 FSRs is 18 analog signals, but the Mega has 16 analog inputs. That leaves no room for anything else, such as battery voltage. Plan an analog mux (e.g. a 16-channel CD74HC4067) or external I2C ADCs (e.g. ADS1115).</li>
+        <li data-id="load-cell-amps"><strong>Load-cell amplifiers.</strong> Load cells need an amplifier/ADC such as the HX711. Decide how many cells per foot (one, or four for center-of-pressure) and therefore how many amplifiers.</li>
+        <li data-id="servo-driver"><strong>Servo driving.</strong> Drive the pulses straight from the Mega (the Arduino Servo library supports up to 48 servos on a Mega), or offload to two PCA9685 16-channel I2C boards and free up the Mega's timers.</li>
+        <li data-id="pi-mega-link"><strong>Pi ↔ Mega link.</strong> USB serial (simple, and the jSerialComm library works from Java) or I2C (Pi4J). Define the message format early: joint targets out, sensor frames back.</li>
+        <li data-id="ros-or-not"><strong>ROS 2 or plain Java.</strong> Java ROS 2 client support is limited compared with C++/Python. Decide whether to stay in plain Java (Pi4J + your own control loop) or bridge to ROS 2 tools for visualization.</li>
+        <li data-id="torque-budget"><strong>Torque / weight budget.</strong> Estimate limb mass and lever arms for the hips, knees and ankles before finalizing servo models. The legs carry everything.</li>
+        <li data-id="estop"><strong>Emergency stop.</strong> A hardware kill switch on the servo supply, independent of software.</li>
+      </ul>
+    </section>
+  </main>
+<script src="../assets/helmet-kit.js"></script>
+<script>HelmetKit.checklists();</script>
+</body>
+</html>
