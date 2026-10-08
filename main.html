@@ -11,7 +11,7 @@
   body:before { position: fixed; pointer-events: none; }
   .hub { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 72px 16px 64px; }
   .hub-head h1 { margin: 0; font: 700 2rem/1.2 Inter, Arial, sans-serif; color: var(--card-label-color); letter-spacing: .01em; }
-  .hub-head h1 span { color: #10B981; }
+  .hub-head h1 span { color: #3B82F6; }
   .hub-head p { margin: 8px 0 0; color: var(--text-color); font: 15px/1.6 Inter, Arial, sans-serif; max-width: 60ch; }
   .hub-group { margin-top: 40px; }
   .hub-group h2 { margin: 0 0 16px; font: 600 12px/1 Inter, Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--text-color); opacity: .8; }

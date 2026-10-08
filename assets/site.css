@@ -16,13 +16,13 @@ body {
   --muted: #a1a1aa;
   --faint: #71717a;
   --heading: #ffffff;
-  --accent: #34d399;
-  --accent-strong: #10b981;
-  --accent-soft: rgba(52, 211, 153, 0.12);
+  --accent: #60A5FA;
+  --accent-strong: #3B82F6;
+  --accent-soft: rgba(96, 165, 250, 0.12);
   --warn: #fbbf24;
   --warn-soft: rgba(251, 191, 36, 0.12);
-  --info: #60a5fa;
-  --info-soft: rgba(96, 165, 250, 0.12);
+  --info: #22d3ee;
+  --info-soft: rgba(34, 211, 238, 0.12);
   --danger: #f87171;
   --code-bg: rgba(255, 255, 255, 0.05);
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
@@ -38,13 +38,13 @@ body.light {
   --muted: #52525b;
   --faint: #71717a;
   --heading: #18181b;
-  --accent: #059669;
-  --accent-strong: #047857;
-  --accent-soft: rgba(16, 185, 129, 0.1);
+  --accent: #2563EB;
+  --accent-strong: #1D4ED8;
+  --accent-soft: rgba(59, 130, 246, 0.1);
   --warn: #b45309;
   --warn-soft: rgba(245, 158, 11, 0.1);
-  --info: #2563eb;
-  --info-soft: rgba(59, 130, 246, 0.08);
+  --info: #0891b2;
+  --info-soft: rgba(8, 145, 178, 0.08);
   --danger: #dc2626;
   --code-bg: rgba(24, 24, 27, 0.05);
   --shadow: 0 6px 18px rgba(24, 24, 27, 0.06);
@@ -57,7 +57,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
-  background-image: radial-gradient(ellipse 80% 45% at 50% -10%, rgba(16, 185, 129, 0.09), transparent 70%);
+  background-image: radial-gradient(ellipse 80% 45% at 50% -10%, rgba(59, 130, 246, 0.09), transparent 70%);
   background-repeat: no-repeat;
   color: var(--text);
   font: 15.5px/1.65 Inter, "Segoe UI", Roboto, Arial, sans-serif;
@@ -106,7 +106,7 @@ pre code { background: none; padding: 0; }
   color: inherit;
   transition: border-color 0.2s, transform 0.2s;
 }
-.link-card:hover { border-color: rgba(52, 211, 153, 0.45); text-decoration: none; transform: translateY(-1px); }
+.link-card:hover { border-color: rgba(96, 165, 250, 0.45); text-decoration: none; transform: translateY(-1px); }
 .link-card h3 { margin: 0 0 4px; font-size: 1rem; }
 .link-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
 .link-card.planned { opacity: 0.6; border-style: dashed; cursor: default; }
@@ -138,7 +138,7 @@ input, select, textarea {
   border: 1px solid var(--border-strong); border-radius: 10px; padding: 8px 10px; width: 100%;
 }
 textarea { min-height: 70px; resize: vertical; }
-input:focus, select:focus, textarea:focus { outline: 2px solid rgba(52, 211, 153, 0.4); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid rgba(96, 165, 250, 0.4); outline-offset: 1px; }
 label { display: block; font-size: 0.86rem; color: var(--muted); }
 label > input, label > select, label > textarea { margin-top: 4px; }
 .form-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }

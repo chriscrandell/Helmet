@@ -1,12 +1,12 @@
 :root {
   color-scheme: dark;
-  --bg: #07110f;
-  --panel: rgba(10, 24, 24, 0.92);
-  --panel-2: rgba(18, 36, 36, 0.9);
+  --bg: #0d1117;
+  --panel: rgba(17, 21, 28, 0.92);
+  --panel-2: rgba(26, 31, 40, 0.9);
   --border: rgba(255, 255, 255, 0.12);
-  --text: #eaf6f3;
-  --muted: #8ea7a0;
-  --accent: #41d6b2;
+  --text: #e6edf3;
+  --muted: #9aa4b2;
+  --accent: #60a5fa;
   --accent-2: #67a8ff;
   --warning: #ffca3a;
   --danger: #ff6b6b;
@@ -17,7 +17,7 @@
 body {
   margin: 0;
   font-family: Inter, "Segoe UI", Roboto, sans-serif;
-  background: radial-gradient(circle at top left, rgba(65, 214, 178, 0.16), transparent 28%), linear-gradient(135deg, #03110d 0%, var(--bg) 100%);
+  background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 28%), linear-gradient(135deg, #0a0d12 0%, var(--bg) 100%);
   color: var(--text);
 }
 
@@ -156,13 +156,13 @@ th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-
   padding: 10px 14px;
   border-radius: 999px;
   border: 1px solid var(--accent);
-  background: rgba(65,214,178,0.14);
+  background: rgba(96, 165, 250,0.14);
   color: var(--text);
   cursor: pointer;
   font: inherit;
 }
 
-.modal-backdrop { position: fixed; inset: 0; background: rgba(3, 10, 10, 0.78); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 20; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(5, 8, 12, 0.78); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 20; }
 .modal-backdrop.open { display: flex; }
 
 .modal-card { width: min(720px, 100%); background: var(--panel); border: 1px solid var(--border); border-radius: 22px; padding: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); max-height: 90vh; overflow-y: auto; }
@@ -173,15 +173,15 @@ th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-
 
 .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 .form-actions button { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: var(--text); cursor: pointer; font: inherit; }
-.form-actions .submit-btn { border-color: var(--accent); background: rgba(65,214,178,0.16); }
+.form-actions .submit-btn { border-color: var(--accent); background: rgba(96, 165, 250,0.16); }
 
 .wiring-grid { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
 .node-list button { display: block; width: 100%; text-align: left; margin-bottom: 8px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; font: inherit; }
-.node-list button.active { border-color: var(--accent); background: rgba(65,214,178,0.12); }
+.node-list button.active { border-color: var(--accent); background: rgba(96, 165, 250,0.12); }
 
 .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .gallery-item { padding: 10px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); }
-.gallery-item .photo { height: 130px; border-radius: 12px; background: linear-gradient(135deg, rgba(65,214,178,0.2), rgba(103,168,255,0.2)); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 8px; overflow: hidden; }
+.gallery-item .photo { height: 130px; border-radius: 12px; background: linear-gradient(135deg, rgba(96, 165, 250,0.2), rgba(103,168,255,0.2)); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 8px; overflow: hidden; }
 .gallery-item .photo img { width: 100%; height: 100%; object-fit: cover; }
 
 .diagram-slot {
@@ -201,7 +201,7 @@ th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-
 
 .calc-form { display: grid; gap: 12px; }
 .calc-form label { display: grid; gap: 6px; color: var(--muted); }
-.calc-results { margin-top: 14px; background: rgba(65, 214, 178, 0.1); border: 1px solid rgba(65, 214, 178, 0.16); border-radius: 14px; padding: 12px 14px; }
+.calc-results { margin-top: 14px; background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.16); border-radius: 14px; padding: 12px 14px; }
 
 .roadmap { display: grid; gap: 12px; }
 .roadmap-card { padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); }
