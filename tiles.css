@@ -16,10 +16,10 @@ body {
   --card-icon-border-color: rgba(255, 255, 255, 0.12);
   --card-shine-opacity: .1;
   --card-shine-gradient: conic-gradient(from 205deg at 50% 50%, rgba(59, 130, 246, 0) 0deg, #3B82F6 25deg, rgba(96, 165, 250, 0.18) 295deg, rgba(59, 130, 246, 0) 360deg);
-  --card-line-color: #2A2B2C;
-  --card-tile-color: rgba(59, 130, 246, 0.05);
+  --card-line-color: rgba(96, 165, 250, 0.28);
+  --card-tile-color: rgba(59, 130, 246, 0.12);
 
-  --card-hover-border-color: rgba(255, 255, 255, 0.2);
+  --card-hover-border-color: rgba(96, 165, 250, 0.45);
   --card-hover-box-shadow-1: rgba(0, 0, 0, 0.04);
   --card-hover-box-shadow-1-y: 5px;
   --card-hover-box-shadow-1-blur: 10px;
@@ -50,19 +50,19 @@ body {
     --card-icon-border-color: rgba(24, 24, 27, 0.1);
     --card-shine-opacity: .3;
     --card-shine-gradient: conic-gradient(from 225deg at 50% 50%, rgba(59, 130, 246, 0) 0deg, #3B82F6 25deg, #EFF6FF 285deg, #FFFFFF 345deg, rgba(59, 130, 246, 0) 360deg);
-    --card-line-color: #E9E9E7;
-    --card-tile-color: rgba(59, 130, 246, 0.08);
+    --card-line-color: rgba(37, 99, 235, 0.22);
+    --card-tile-color: rgba(59, 130, 246, 0.12);
 
-    --card-hover-border-color: rgba(24, 24, 27, 0.15);
+    --card-hover-border-color: rgba(37, 99, 235, 0.35);
     --card-hover-box-shadow-1: rgba(24, 24, 27, 0.05);
     --card-hover-box-shadow-1-y: 3px;
     --card-hover-box-shadow-1-blur: 6px;
     --card-hover-box-shadow-2: rgba(24, 24, 27, 0.1);
     --card-hover-box-shadow-2-y: 8px;
     --card-hover-box-shadow-2-blur: 15px;
-    --card-hover-icon-color: #18181B;
-    --card-hover-icon-background-color: rgba(24, 24, 27, 0.04);
-    --card-hover-icon-border-color: rgba(24, 24, 27, 0.34);
+    --card-hover-icon-color: #2563EB;
+    --card-hover-icon-background-color: rgba(59, 130, 246, 0.08);
+    --card-hover-icon-border-color: rgba(37, 99, 235, 0.35);
 
     --blur-opacity: .1;
   }

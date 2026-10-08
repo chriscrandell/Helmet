@@ -20,8 +20,9 @@
   .hub .card .status {
     position: absolute; top: 18px; right: 16px; z-index: 2;
     font: 600 11px/1 Inter, Arial, sans-serif; padding: 5px 9px; border-radius: 999px;
-    color: var(--card-hover-icon-color); background: var(--card-hover-icon-background-color); border: 1px solid var(--card-hover-icon-border-color);
+    color: #93C5FD; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(96, 165, 250, 0.35);
   }
+  body.light .hub .card .status { color: #1D4ED8; background: rgba(59, 130, 246, 0.1); border-color: rgba(37, 99, 235, 0.3); }
   .hub-foot { margin-top: 48px; color: var(--text-color); font: 13px/1.6 Inter, Arial, sans-serif; opacity: .75; }
   .hub-foot code { font-family: Consolas, monospace; }
   .day-night { position: fixed; z-index: 5; }
